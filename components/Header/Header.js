@@ -14,18 +14,22 @@ const StyledHeader = styled.header`
 `;
 
 const Logo = styled(Link)`
+  background-color: var(--color-primary);
   font-size: 2rem;
-  color: var(--color-primary);
+  color: var(--bg-color-light);
   display: inline-flex;
   align-items: center;
   text-decoration: none;
+  border: 1px solid var(--color-primary);
+  border-radius: 12px;
+  padding: 5px 20px 5px 10px;
 `;
 
 export default function Header() {
   return (
     <StyledHeader>
-      <Logo href="/" aria-label="Go to Spotlight page">
-        Flipwise
+      <Logo href="/" aria-label="Go to Homepage">
+        🦉 FlipWise
       </Logo>
     </StyledHeader>
   );
