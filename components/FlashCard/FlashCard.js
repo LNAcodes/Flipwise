@@ -1,5 +1,6 @@
 // components\FlashCard\FlashCard.js
 
+import { useState } from "react";
 import styled from "styled-components";
 
 /* Styling */
@@ -43,6 +44,7 @@ const Label = styled.p`
 `;
 
 export default function FlashCard({ flashcard }) {
+  const [isFlipped, setIsFlipped] = useState(false);
   return (
     <>
       <Card>
