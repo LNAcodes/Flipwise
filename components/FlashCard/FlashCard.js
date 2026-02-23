@@ -5,11 +5,22 @@ import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
 
 /* Styling */
-const Card = styled.article`
+const CardFront = styled.article`
   border: 3px solid var(--color-primary);
   border-radius: 12px;
   overflow: hidden;
-  background: white;
+  background: #d1fcff;
+  margin-top: 10px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const CardBack = styled.article`
+  border: 3px solid var(--color-primary);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #d1ffd3;
   margin-top: 10px;
   &:hover {
     cursor: pointer;
@@ -74,7 +85,7 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
       flipSpeedFrontToBack="0.4"
       isFlipped={isFlipped}
     >
-      <Card onClick={flipCard}>
+      <CardFront onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
@@ -85,8 +96,8 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
         <CardFooter>
           {showFlipHint && <Hint> 💡 Tap to show answer</Hint>}
         </CardFooter>
-      </Card>
-      <Card onClick={flipCard}>
+      </CardFront>
+      <CardBack onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
@@ -97,7 +108,7 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
         <CardFooter>
           {showFlipHint && <Hint>💡 Tap to show question</Hint>}
         </CardFooter>
-      </Card>
+      </CardBack>
     </ReactCardFlip>
   );
 }
