@@ -9,8 +9,7 @@ const collectionsSchema = new Schema({
   color: { type: String, required: true },
 });
 
-const Collections =
-  mongoose.models.Collections ||
-  mongoose.model("Collections", collectionsSchema);
+const Collection =
+  mongoose.models.Collection || mongoose.model("Collection", collectionsSchema);
 
-export default Collections;
+export default Collection;
