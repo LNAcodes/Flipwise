@@ -5,10 +5,12 @@ import FlashCard from "../FlashCard/FlashCard";
 
 const List = styled.ul`
   margin: 0;
+  padding: 0;
+  list-style: none;
 `;
 
 const ListItem = styled.li`
-  margin: 0;
+  margin: 0 0 20px 0;
 `;
 
 export default function FlashCardList({ flashcards = [] }) {
