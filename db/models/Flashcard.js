@@ -1,3 +1,5 @@
+// db\models\Flashcards.js
+
 import mongoose from "mongoose";
 
 const { Schema } = mongoose;

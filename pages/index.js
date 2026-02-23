@@ -1,4 +1,15 @@
+// pages\index.js
+
+import FlashCardList from "@/components/FlashCardList/FlashCardList";
+import styled from "styled-components";
 import useSWR from "swr";
+
+const Title = styled.h1`
+  color: #000;
+  font-size: 1rem;
+  line-height: 1.2;
+  margin-bottom: 30px;
+`;
 
 export default function HomePage() {
   const { data, error, isLoading } = useSWR("/api/flashcards");
@@ -6,14 +17,9 @@ export default function HomePage() {
   if (isLoading) return <p>Loading data... Please wait...</p>;
 
   return (
-    <>
-      <ul>
-        {data.map((card) => (
-          <li key={card._id}>
-            <strong>{card.question}</strong>:{card.answer}
-          </li>
-        ))}
-      </ul>
-    </>
+    <main>
+      <Title>Homepage</Title>
+      <FlashCardList flashcards={data} />
+    </main>
   );
 }
