@@ -1,8 +1,20 @@
+import useSWR from "swr";
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
 export default function HomePage() {
+  const { data, error, isLoading } = useSWR("/api/flashcards", fetcher);
+  if (error) return <p>Fehler beim Laden</p>;
+  if (isLoading) return <p>Lade Daten...Bitte warten...</p>;
+
   return (
-    <div>
-      <h1>Hello from Next.js</h1>
-      <h2>This is a Test</h2>
-    </div>
+    <>
+      <ul>
+        {data.map((card) => (
+          <li key={card._id}>
+            <strong>{card.question}</strong>:{card.answer}
+          </li>
+        ))}
+      </ul>
+    </>
   );
 }
