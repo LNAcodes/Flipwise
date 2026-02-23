@@ -17,11 +17,7 @@ const CardHeader = styled.div`
   background: var(--color-primary);
   padding: 5px 15px;
 `;
-const CardFront = styled.div`
-  padding: 10px;
-`;
-const CardBack = styled.div`
-  display: none;
+const CardBody = styled.div`
   padding: 10px;
 `;
 const CollectionTitle = styled.h2`
@@ -58,21 +54,26 @@ export default function FlashCard() {
   console.log(flashCard);
 
   return (
-    <Card>
-      <CardHeader>
-        <CollectionTitle>{flashCard.collection}</CollectionTitle>
-      </CardHeader>
-      <CardFront>
-        <Label>Question</Label>
-        <Question>{flashCard.question}</Question>
-        <Label>Answer</Label>
-        <Answer>{flashCard.answer}</Answer>
-      </CardFront>
-      <CardBack>
-        <CollectionTitle>{flashCard.collection}</CollectionTitle>
-        <Label>Answer</Label>
-        <Answer>{flashCard.answer}</Answer>
-      </CardBack>
-    </Card>
+    <>
+      <Card className="card" onClick={flipCard}>
+        <CardHeader>
+          <CollectionTitle>{flashCard.collection}</CollectionTitle>
+        </CardHeader>
+        <CardBody>
+          <Label>Question</Label>
+          <Question>{flashCard.question}</Question>
+        </CardBody>
+      </Card>
+      <Card className="card card--back" onClick={flipCard}>
+        <CardHeader>
+          <CollectionTitle>{flashCard.collection}</CollectionTitle>
+        </CardHeader>
+        <CardBody>
+          <CollectionTitle>{flashCard.collection}</CollectionTitle>
+          <Label>Answer</Label>
+          <Answer>{flashCard.answer}</Answer>
+        </CardBody>
+      </Card>
+    </>
   );
 }
