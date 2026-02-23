@@ -1,7 +1,8 @@
 // components/Header/Header.js
 
-import Link from "next/link";
 import styled from "styled-components";
+import Link from "next/link";
+import Image from "next/image";
 
 const StyledHeader = styled.header`
   position: sticky;
@@ -16,7 +17,7 @@ const StyledHeader = styled.header`
 const Logo = styled(Link)`
   background-color: var(--color-primary);
   font-size: 2rem;
-  color: var(--bg-color-light);
+  color: var(--color-accent);
   display: inline-flex;
   align-items: center;
   text-decoration: none;
@@ -29,7 +30,14 @@ export default function Header() {
   return (
     <StyledHeader>
       <Logo href="/" aria-label="Go to Homepage">
-        🦉 FlipWise
+        <Image
+          src="/assets/images/logo-flipwise.png"
+          width={40}
+          height={40}
+          alt="Logo FlipWise"
+          priority
+        />
+        FlipWise
       </Logo>
     </StyledHeader>
   );
