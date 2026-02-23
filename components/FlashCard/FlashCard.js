@@ -12,13 +12,15 @@ const Card = styled.article`
   background: white;
   margin-top: 10px;
   &:hover {
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    cursor: pointer;
   }
 `;
+
 const CardHeader = styled.div`
   background: var(--color-primary);
   padding: 5px 15px;
 `;
+
 const CollectionTitle = styled.h2`
   color: var(--text-color-light);
   font-size: 1rem;
@@ -27,6 +29,7 @@ const CollectionTitle = styled.h2`
 
 const CardBody = styled.div`
   padding: 10px;
+  min-height: 120px;
 `;
 const Question = styled.h3`
   color: #000;
@@ -56,13 +59,11 @@ const Hint = styled.p`
   line-height: 0;
 `;
 
-let flipTabCount = 0;
-
 export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   function flipCard() {
-    if (showFlipHint) onFirstFlip?.(); // einmal klicken -> global aus
+    if (showFlipHint) onFirstFlip?.();
     setIsFlipped((prev) => !prev);
   }
 
@@ -82,7 +83,7 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
           <Question>{flashcard.question}</Question>
         </CardBody>
         <CardFooter>
-          {showFlipHint && <Hint>Tap to show answer</Hint>}
+          {showFlipHint && <Hint> 💡 Tap to show answer</Hint>}
         </CardFooter>
       </Card>
       <Card onClick={flipCard}>
@@ -94,7 +95,7 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
           <Answer>{flashcard.answer}</Answer>
         </CardBody>
         <CardFooter>
-          {showFlipHint && <Hint>Tap to show question</Hint>}
+          {showFlipHint && <Hint>💡 Tap to show question</Hint>}
         </CardFooter>
       </Card>
     </ReactCardFlip>
