@@ -1,7 +1,7 @@
 // pages\index.js
-
-import FlashCard from "@/components/FlashCard/FlashCard";
+import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
+import useSWR from "swr";
 
 const Title = styled.h1`
   color: #000;
@@ -11,10 +11,14 @@ const Title = styled.h1`
 `;
 
 export default function HomePage() {
+  const { data, error, isLoading } = useSWR("/api/flashcards");
+  if (error) return <p>Error loading flashcards.</p>;
+  if (isLoading) return <p>Loading...</p>;
+
   return (
     <main>
       <Title>Homepage</Title>
-      <FlashCard />
+      <FlashCardList flashcards={data} />
     </main>
   );
 }
