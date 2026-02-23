@@ -19,13 +19,14 @@ const CardHeader = styled.div`
   background: var(--color-primary);
   padding: 5px 15px;
 `;
-const CardBody = styled.div`
-  padding: 10px;
-`;
 const CollectionTitle = styled.h2`
   color: var(--text-color-light);
   font-size: 1rem;
   line-height: 1.2;
+`;
+
+const CardBody = styled.div`
+  padding: 10px;
 `;
 const Question = styled.h3`
   color: #000;
@@ -43,11 +44,26 @@ const Label = styled.p`
   line-height: 0;
 `;
 
-export default function FlashCard({ flashcard }) {
+const CardFooter = styled.div`
+  display: flex;
+  justify-content: center;
+  background: var(--color-primary);
+  padding: 5px 15px;
+`;
+const Hint = styled.p`
+  color: var(--text-color-light);
+  font-size: 0.9rem;
+  line-height: 0;
+`;
+
+let flipTabCount = 0;
+
+export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   function flipCard() {
-    setIsFlipped(!isFlipped);
+    if (showFlipHint) onFirstFlip?.(); // einmal klicken -> global aus
+    setIsFlipped((prev) => !prev);
   }
 
   return (
@@ -65,6 +81,9 @@ export default function FlashCard({ flashcard }) {
           <Label>Question</Label>
           <Question>{flashcard.question}</Question>
         </CardBody>
+        <CardFooter>
+          {showFlipHint && <Hint>Tap to show answer</Hint>}
+        </CardFooter>
       </Card>
       <Card onClick={flipCard}>
         <CardHeader>
@@ -74,6 +93,9 @@ export default function FlashCard({ flashcard }) {
           <Label>Answer</Label>
           <Answer>{flashcard.answer}</Answer>
         </CardBody>
+        <CardFooter>
+          {showFlipHint && <Hint>Tap to show question</Hint>}
+        </CardFooter>
       </Card>
     </ReactCardFlip>
   );

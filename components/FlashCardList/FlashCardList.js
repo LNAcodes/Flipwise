@@ -1,5 +1,6 @@
 // components\FlashCardList\FlashCardList.js
 
+import { useState } from "react";
 import styled from "styled-components";
 import FlashCard from "../FlashCard/FlashCard";
 
@@ -14,11 +15,21 @@ const ListItem = styled.li`
 `;
 
 export default function FlashCardList({ flashcards = [] }) {
+  const [showFlipHint, setShowFlipHint] = useState(true);
+
+  const handleFirstFlip = () => {
+    setShowFlipHint(false);
+  };
+
   return (
     <List>
       {flashcards.map((flashcard) => (
         <ListItem key={flashcard._id}>
-          <FlashCard flashcard={flashcard} />
+          <FlashCard
+            flashcard={flashcard}
+            showFlipHint={showFlipHint}
+            onFirstFlip={handleFirstFlip}
+          />
         </ListItem>
       ))}
     </List>
