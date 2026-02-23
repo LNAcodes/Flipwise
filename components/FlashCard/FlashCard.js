@@ -42,6 +42,7 @@ const Label = styled.p`
   line-height: 0;
 `;
 
+// Static Dummy Data for the FashCard (should removed upon db connection is there)
 export default function FlashCard() {
   const flashCard = {
     _id: {
@@ -51,7 +52,6 @@ export default function FlashCard() {
     question: "What is the process by which plants make their food?",
     answer: "Photosynthesis",
   };
-  console.log(flashCard);
 
   return (
     <>
