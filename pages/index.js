@@ -1,8 +1,20 @@
+// pages\index.js
+
+import FlashCard from "@/components/FlashCard/FlashCard";
+import styled from "styled-components";
+
+const Title = styled.h1`
+  color: #000;
+  font-size: 1rem;
+  line-height: 1.2;
+  margin-bottom: 30px;
+`;
+
 export default function HomePage() {
   return (
-    <div>
-      <h1>Hello from Next.js</h1>
-      <h2>This is a Test</h2>
-    </div>
+    <main>
+      <Title>Homepage</Title>
+      <FlashCard />
+    </main>
   );
 }
