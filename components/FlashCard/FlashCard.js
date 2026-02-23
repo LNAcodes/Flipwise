@@ -31,7 +31,6 @@ const Question = styled.h3`
   color: #000;
   font-size: 1rem;
   line-height: 1.2;
-  margin-bottom: 30px;
 `;
 const Answer = styled.h3`
   color: var(--text-color-dark);
@@ -67,7 +66,6 @@ export default function FlashCard({ flashcard }) {
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
         <CardBody>
-          <CollectionTitle>{flashcard.collection}</CollectionTitle>
           <Label>Answer</Label>
           <Answer>{flashcard.answer}</Answer>
         </CardBody>
