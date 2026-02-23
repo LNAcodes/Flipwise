@@ -1,8 +1,8 @@
 // pages/_app.js
 
 import GlobalStyle from "../styles";
-import Header from "@/components/Header/Header";
 import { SWRConfig } from "swr";
+import Header from "@/components/Header/Header";
 
 const fetcher = async (url) => {
   const res = await fetch(url);
