@@ -42,36 +42,26 @@ const Label = styled.p`
   line-height: 0;
 `;
 
-// Static Dummy Data for the FashCard (should removed upon db connection is there)
-export default function FlashCard() {
-  const flashCard = {
-    _id: {
-      $oid: "682206a36367c154943a90ae",
-    },
-    collection: "Biology",
-    question: "What is the process by which plants make their food?",
-    answer: "Photosynthesis",
-  };
-
+export default function FlashCard({ flashcard }) {
   return (
     <>
       <Card className="card">
         <CardHeader>
-          <CollectionTitle>{flashCard.collection}</CollectionTitle>
+          <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
         <CardBody>
           <Label>Question</Label>
-          <Question>{flashCard.question}</Question>
+          <Question>{flashcard.question}</Question>
         </CardBody>
       </Card>
       <Card className="card card--back">
         <CardHeader>
-          <CollectionTitle>{flashCard.collection}</CollectionTitle>
+          <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
         <CardBody>
-          <CollectionTitle>{flashCard.collection}</CollectionTitle>
+          <CollectionTitle>{flashcard.collection}</CollectionTitle>
           <Label>Answer</Label>
-          <Answer>{flashCard.answer}</Answer>
+          <Answer>{flashcard.answer}</Answer>
         </CardBody>
       </Card>
     </>

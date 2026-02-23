@@ -1,7 +1,10 @@
 // pages\index.js
+
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
 import useSWR from "swr";
+
+const fetcher = (url) => fetch(url).then((res) => res.json());
 
 const Title = styled.h1`
   color: #000;
@@ -11,9 +14,10 @@ const Title = styled.h1`
 `;
 
 export default function HomePage() {
-  const { data, error, isLoading } = useSWR("/api/flashcards");
+  const { data, error } = useSWR("/api/flashcards", fetcher);
+
   if (error) return <p>Error loading flashcards.</p>;
-  if (isLoading) return <p>Loading...</p>;
+  if (!data) return <p>Loading...</p>;
 
   return (
     <main>
