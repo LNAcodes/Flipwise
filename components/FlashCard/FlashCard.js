@@ -45,7 +45,7 @@ const Label = styled.p`
 export default function FlashCard({ flashcard }) {
   return (
     <>
-      <Card className="card">
+      <Card>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
@@ -54,7 +54,7 @@ export default function FlashCard({ flashcard }) {
           <Question>{flashcard.question}</Question>
         </CardBody>
       </Card>
-      <Card className="card card--back">
+      <Card>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
