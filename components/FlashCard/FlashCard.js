@@ -1,6 +1,7 @@
 // components\FlashCard\FlashCard.js
 
 import { useState } from "react";
+import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
 
 /* Styling */
@@ -45,9 +46,14 @@ const Label = styled.p`
 
 export default function FlashCard({ flashcard }) {
   const [isFlipped, setIsFlipped] = useState(false);
+
+  function flipCard() {
+    setIsFlipped(!isFlipped);
+  }
+
   return (
-    <>
-      <Card>
+    <ReactCardFlip flipDirection="horizontal" isFlipped={isFlipped}>
+      <Card onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
@@ -56,7 +62,7 @@ export default function FlashCard({ flashcard }) {
           <Question>{flashcard.question}</Question>
         </CardBody>
       </Card>
-      <Card>
+      <Card onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
@@ -66,6 +72,6 @@ export default function FlashCard({ flashcard }) {
           <Answer>{flashcard.answer}</Answer>
         </CardBody>
       </Card>
-    </>
+    </ReactCardFlip>
   );
 }
