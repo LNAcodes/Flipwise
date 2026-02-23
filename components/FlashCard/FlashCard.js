@@ -55,7 +55,7 @@ export default function FlashCard() {
 
   return (
     <>
-      <Card className="card" onClick={flipCard}>
+      <Card className="card">
         <CardHeader>
           <CollectionTitle>{flashCard.collection}</CollectionTitle>
         </CardHeader>
@@ -64,7 +64,7 @@ export default function FlashCard() {
           <Question>{flashCard.question}</Question>
         </CardBody>
       </Card>
-      <Card className="card card--back" onClick={flipCard}>
+      <Card className="card card--back">
         <CardHeader>
           <CollectionTitle>{flashCard.collection}</CollectionTitle>
         </CardHeader>
