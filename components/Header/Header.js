@@ -10,12 +10,12 @@ const StyledHeader = styled.header`
   display: flex;
   justify-content: center;
   padding: 16px 24px;
-  background: #ffffff;
+  background-color: var(--bg-color-light);
 `;
 
 const Logo = styled(Link)`
   font-size: 2rem;
-  color: #287895;
+  color: var(--color-primary);
   display: inline-flex;
   align-items: center;
   text-decoration: none;

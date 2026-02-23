@@ -1,6 +1,25 @@
+/* styles.js  */
+
 import { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
+:root {
+    --color-primary: #287895;
+    --text-color-dark: #000000;
+    --text-color-light: #ffffff;
+    --bg-color-light: #ffffff;
+    --bg-color-dark: #222222;
+    --color-biology: #8B9467;
+    --color-chemistry: #FFC107;
+    --color-geography: #34A85A;
+    --color-math: #4B5154;
+    --color-physics: #FFA07A;
+    --color-technologiy: #456778;
+    --color-art: #8F8E94;
+    --color-music: #FF69B4;
+    --gap: 20px;
+  }
+
   *,
   *::before,
   *::after {
@@ -13,7 +32,7 @@ export default createGlobalStyle`
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    background-color: #fff;
+    background-color: var(--bg-color-light);
 }
 
 main {
@@ -26,11 +45,11 @@ h1, h2 {
     margin-bottom: 20px;
 }
 h2 {
-    color: #ccc;
+    color: var(--text-color-dark);
     font-size: 18px;
 }
 h1 {
     font-family: Lucida, sans-serif;
     font-weight: 300;
-    color: #287895;
+    color: var(--color-primary);
 }`;

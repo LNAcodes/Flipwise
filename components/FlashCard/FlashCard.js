@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 /* Styling */
 const Card = styled.article`
-  border: 3px solid #287895;
+  border: 3px solid var(--color-primary);
   border-radius: 12px;
   overflow: hidden;
   background: white;
@@ -14,7 +14,7 @@ const Card = styled.article`
   }
 `;
 const CardHeader = styled.div`
-  background: #287895;
+  background: var(--color-primary);
   padding: 5px 15px;
 `;
 const CardFront = styled.div`
@@ -25,7 +25,7 @@ const CardBack = styled.div`
   padding: 10px;
 `;
 const CollectionTitle = styled.h2`
-  color: #ffffff;
+  color: var(--text-color-light);
   font-size: 1rem;
   line-height: 1.2;
 `;
@@ -36,12 +36,12 @@ const Question = styled.h3`
   margin-bottom: 30px;
 `;
 const Answer = styled.h3`
-  color: #000;
+  color: var(--text-color-dark);
   font-size: 1rem;
   line-height: 1.2;
 `;
 const Label = styled.p`
-  color: #000;
+  color: var(--text-color-dark);
   font-size: 0.7rem;
   line-height: 0;
 `;
