@@ -1,10 +1,9 @@
 import useSWR from "swr";
 
-const fetcher = (url) => fetch(url).then((res) => res.json());
 export default function HomePage() {
-  const { data, error, isLoading } = useSWR("/api/flashcards", fetcher);
-  if (error) return <p>Fehler beim Laden</p>;
-  if (isLoading) return <p>Lade Daten...Bitte warten...</p>;
+  const { data, error, isLoading } = useSWR("/api/flashcards");
+  if (error) return <p>Error loading</p>;
+  if (isLoading) return <p>Loading data... Please wait...</p>;
 
   return (
     <>
