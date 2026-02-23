@@ -51,7 +51,12 @@ export default function FlashCard({ flashcard }) {
   }
 
   return (
-    <ReactCardFlip flipDirection="horizontal" isFlipped={isFlipped}>
+    <ReactCardFlip
+      flipDirection="horizontal"
+      flipSpeedBackToFront="0.4"
+      flipSpeedFrontToBack="0.4"
+      isFlipped={isFlipped}
+    >
       <Card onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
