@@ -1,8 +1,8 @@
 // components\FlashCardList\FlashCardList.js
 
-import { useState } from "react";
 import styled from "styled-components";
-import FlashCard from "../FlashCard/FlashCard";
+import FlashCard from "@/components/FlashCard/FlashCard";
+import { useFlipHint } from "@/hooks/useFlipHint";
 
 const List = styled.ul`
   margin: 0;
@@ -15,11 +15,7 @@ const ListItem = styled.li`
 `;
 
 export default function FlashCardList({ flashcards = [] }) {
-  const [showFlipHint, setShowFlipHint] = useState(true);
-
-  const handleFirstFlip = () => {
-    setShowFlipHint(false);
-  };
+  const { showHint, markFirstFlip } = useFlipHint();
 
   return (
     <List>
@@ -27,8 +23,8 @@ export default function FlashCardList({ flashcards = [] }) {
         <ListItem key={flashcard._id}>
           <FlashCard
             flashcard={flashcard}
-            showFlipHint={showFlipHint}
-            onFirstFlip={handleFirstFlip}
+            showFlipHint={showHint}
+            onFirstFlip={markFirstFlip}
           />
         </ListItem>
       ))}
