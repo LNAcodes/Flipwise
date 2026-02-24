@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
+import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 
 /* Styling */
 const CardFront = styled.article`
@@ -58,23 +59,13 @@ const Label = styled.p`
   line-height: 0;
 `;
 
-const CardFooter = styled.div`
-  display: flex;
-  justify-content: center;
-  background: var(--color-primary);
-  padding: 5px 15px;
-`;
-const Hint = styled.p`
-  color: var(--text-color-light);
-  font-size: 0.9rem;
-  line-height: 0;
-`;
-
 export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
   function flipCard() {
-    if (showFlipHint) onFirstFlip?.();
+    if (onFirstFlip) {
+      onFirstFlip();
+    }
     setIsFlipped((prev) => !prev);
   }
 
@@ -93,9 +84,7 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
           <Label>Question</Label>
           <Question>{flashcard.question}</Question>
         </CardBody>
-        <CardFooter>
-          {showFlipHint && <Hint> 💡 Tap to show answer</Hint>}
-        </CardFooter>
+        <FlashCardFooter showHint={showFlipHint} text="Tap to show answer" />
       </CardFront>
       <CardBack onClick={flipCard}>
         <CardHeader>
@@ -105,9 +94,7 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
           <Label>Answer</Label>
           <Answer>{flashcard.answer}</Answer>
         </CardBody>
-        <CardFooter>
-          {showFlipHint && <Hint>💡 Tap to show question</Hint>}
-        </CardFooter>
+        <FlashCardFooter showHint={showFlipHint} text="Tap to show question" />
       </CardBack>
     </ReactCardFlip>
   );
