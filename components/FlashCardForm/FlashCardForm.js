@@ -16,7 +16,16 @@ const Label = styled.label`
   line-height: 1.2;
   padding: 5px;
 `;
-const Input = styled.input``;
+const Input = styled.input`
+  &:user-invalid {
+    outline: 2px solid red;
+  }
+`;
+const Select = styled.select`
+  &:user-invalid {
+    outline: 2px solid red;
+  }
+`;
 const Hint = styled.p`
   color: #333;
   font-size: 0.7rem;
@@ -29,13 +38,16 @@ const HeadingForm = styled.h2``;
 
 export default function FlashCardForm({ initialData = {} }) {
   const [collection, setCollection] = useState("");
-  const { data: collections, mutate } = useSWR("/api/collections");
+  const { data: collections } = useSWR("/api/collections");
+  const { data: flashcards, mutate } = useSWR("/api/flashcards");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
+    setIsSubmitting(true);
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
-    const response = await fetch("/api/collections", {
+    const response = await fetch("/api/flashcards", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -43,15 +55,18 @@ export default function FlashCardForm({ initialData = {} }) {
       body: JSON.stringify(data),
     });
     if (response.ok) {
-      mutate();
+      const newFlashcard = await response.json();
+      mutate([newFlashcard, ...flashcards], false);
+      event.target.reset();
+      setCollection("");
     }
-    event.target.reset();
-    setCollection("");
+
+    setIsSubmitting(false);
   }
   return (
     <Form data-js="flashCardForm" onSubmit={handleSubmit}>
       <HeadingForm>Add a new flashcard</HeadingForm>
-      <Label htmlFor="question"></Label>
+      <Label htmlFor="question">Question</Label>
       <Input
         name="question"
         id="question"
@@ -64,12 +79,12 @@ export default function FlashCardForm({ initialData = {} }) {
         aria-describedby="question-hint"
       />
       <Hint id="question-hint">Please enter a question.</Hint>
-      <Label htmlFor="answer"></Label>
+      <Label htmlFor="answer">Answer</Label>
       <Input
         name="answer"
         id="answer"
         required
-        type="textarea"
+        type="text"
         defaultValue=""
         minLength="40"
         maxLength="120"
@@ -77,9 +92,10 @@ export default function FlashCardForm({ initialData = {} }) {
         aria-describedby="answer-hint"
       />
       <Hint id="answer-hint">Please insert an answer.</Hint>
-      <Label htmlFor="collection"></Label>
-      <select
+      <Label htmlFor="collection">Collection</Label>
+      <Select
         id="collection"
+        name="collection"
         required
         value={collection}
         onChange={(event) => setCollection(event.target.value)}
@@ -93,9 +109,9 @@ export default function FlashCardForm({ initialData = {} }) {
             {collection.name}
           </option>
         ))}
-      </select>
+      </Select>
       <Hint id="comment-collecion">Please select a collection.</Hint>
-      <Button type="submit" aria-label="Add flashcard">
+      <Button type="submit" aria-label="Add flashcard" disabled={isSubmitting}>
         Add flashcard
       </Button>
     </Form>
