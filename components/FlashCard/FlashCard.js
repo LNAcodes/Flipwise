@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
+import { useFlipHint } from "@/hooks/useFlipHint";
 import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 
 /* Styling */
@@ -59,14 +60,17 @@ const Label = styled.p`
   line-height: 0;
 `;
 
-export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
+export default function FlashCard({ flashcard }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
+  // globaler im localstorage gespeicherter state
+  // showHint = boolean - bei true wird hint angezeigt sonst nichtl
+  // markFirstFlip = setzt einmalig "hasFlipped" auf true (global)
+  const { showHint, markFirstFlip } = useFlipHint();
+
   function flipCard() {
-    if (onFirstFlip) {
-      onFirstFlip();
-    }
-    setIsFlipped((prev) => !prev);
+    markFirstFlip(); // funktionsaufruf -> info: es wurde geflippt
+    setIsFlipped((prev) => !prev); // card flippen (prev wird umgedreht true/false)
   }
 
   return (
@@ -76,6 +80,7 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
       flipSpeedFrontToBack="0.4"
       isFlipped={isFlipped}
     >
+      {/* FRONT */}
       <CardFront onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
@@ -84,8 +89,10 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
           <Label>Question</Label>
           <Question>{flashcard.question}</Question>
         </CardBody>
-        <FlashCardFooter showHint={showFlipHint} text="Tap to show answer" />
+        <FlashCardFooter showHint={showHint} text="Tap to show answer" />
       </CardFront>
+
+      {/* BACK */}
       <CardBack onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
@@ -94,7 +101,7 @@ export default function FlashCard({ flashcard, showFlipHint, onFirstFlip }) {
           <Label>Answer</Label>
           <Answer>{flashcard.answer}</Answer>
         </CardBody>
-        <FlashCardFooter showHint={showFlipHint} text="Tap to show question" />
+        <FlashCardFooter showHint={showHint} text="Tap to show question" />
       </CardBack>
     </ReactCardFlip>
   );
