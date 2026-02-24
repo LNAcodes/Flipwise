@@ -1,14 +1,16 @@
 // components\FlashCardList\FlashCardList.js
 
 import styled from "styled-components";
-import FlashCard from "../FlashCard/FlashCard";
+import FlashCard from "@/components/FlashCard/FlashCard";
 
 const List = styled.ul`
   margin: 0;
+  padding: 0;
+  list-style: none;
 `;
 
 const ListItem = styled.li`
-  margin: 0;
+  margin: 0 0 20px 0;
 `;
 
 export default function FlashCardList({ flashcards = [] }) {
