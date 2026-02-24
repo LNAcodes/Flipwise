@@ -1,5 +1,6 @@
 // pages\index.js
 
+import FlashCardForm from "@/components/FlashCardForm/FlashCardForm";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
 import useSWR from "swr";
@@ -19,6 +20,7 @@ export default function HomePage() {
   return (
     <main>
       <Title>Homepage</Title>
+      <FlashCardForm />
       <FlashCardList flashcards={data} />
     </main>
   );

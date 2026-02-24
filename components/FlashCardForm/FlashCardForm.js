@@ -1,0 +1,103 @@
+import styled from "styled-components";
+import useSWR from "swr";
+import { useState } from "react";
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 40px;
+`;
+
+const Label = styled.label`
+  color: #333;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 5px;
+`;
+const Input = styled.input``;
+const Hint = styled.p`
+  color: #333;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0 5px;
+  margin-bottom: 10px;
+`;
+const Button = styled.button``;
+const HeadingForm = styled.h2``;
+
+export default function FlashCardForm({ initialData = {} }) {
+  const [collection, setCollection] = useState("");
+  const { data: collections, mutate } = useSWR("/api/collections");
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+    const response = await fetch("/api/collections", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    if (response.ok) {
+      mutate();
+    }
+    event.target.reset();
+    setCollection("");
+  }
+  return (
+    <Form data-js="flashCardForm" onSubmit={handleSubmit}>
+      <HeadingForm>Add a new flashcard</HeadingForm>
+      <Label htmlFor="question"></Label>
+      <Input
+        name="question"
+        id="question"
+        required
+        type="text"
+        defaultValue=""
+        minLength="15"
+        maxLength="100"
+        placeholder="Insert a question"
+        aria-describedby="question-hint"
+      />
+      <Hint id="question-hint">Please enter a question.</Hint>
+      <Label htmlFor="answer"></Label>
+      <Input
+        name="answer"
+        id="answer"
+        required
+        type="textarea"
+        defaultValue=""
+        minLength="40"
+        maxLength="120"
+        placeholder="Insert an answer"
+        aria-describedby="answer-hint"
+      />
+      <Hint id="answer-hint">Please insert an answer.</Hint>
+      <Label htmlFor="collection"></Label>
+      <select
+        id="collection"
+        required
+        value={collection}
+        onChange={(event) => setCollection(event.target.value)}
+      >
+        <option value="" disabled>
+          Please select a collection
+        </option>
+
+        {collections?.map((collection) => (
+          <option key={collection._id} value={collection._id}>
+            {collection.name}
+          </option>
+        ))}
+      </select>
+      <Hint id="comment-collecion">Please select a collection.</Hint>
+      <Button type="submit" aria-label="Add flashcard">
+        Add flashcard
+      </Button>
+    </Form>
+  );
+}
