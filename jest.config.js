@@ -15,7 +15,12 @@ const customJestConfig = {
   testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
+    mongodb: require.resolve("mongodb"),
   },
+  testEnvironmentOptions: {
+    customExportConditions: [""],
+  },
+  transformIgnorePatterns: ["/node_modules/(?!(bson|mongodb)/)"],
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
