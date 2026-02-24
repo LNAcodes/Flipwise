@@ -33,13 +33,14 @@ export default createGlobalStyle`
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    justify-content: center;
     background-color: var(--bg-color-light);
 }
 
 main {
-    flex: 1;
-    max-width: 1100px;
-    margin: 0 30px;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 30px; 
 }
 
 h1, h2 {
