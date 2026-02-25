@@ -56,14 +56,14 @@ export default function FlashCardForm({
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
 
-    // EDIT: wenn onSubmit existiert, benutze das
+    // EDIT:
     if (onSubmit) {
       await onSubmit(data);
       setIsSubmitting(false);
       return;
     }
 
-    // CREATE: sonst wie gehabt POST
+    // CREATE:
     const response = await fetch("/api/flashcards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
