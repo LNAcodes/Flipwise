@@ -28,6 +28,11 @@ const Select = styled.select`
     outline: 2px solid red;
   }
 `;
+
+const Button = styled.button`
+  margin: 10px 0;
+`;
+
 const Hint = styled.p`
   color: #333;
   font-size: 0.7rem;
@@ -35,7 +40,7 @@ const Hint = styled.p`
   padding: 0 5px;
   margin-bottom: 10px;
 `;
-const Button = styled.button``;
+
 const HeadingForm = styled.h2``;
 
 export default function FlashCardForm({
