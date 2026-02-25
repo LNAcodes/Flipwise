@@ -26,19 +26,7 @@ export default async function handler(request, response) {
         // Bitte in euren neuen Cases auch 'message: error.message' nutzen.
         return response.status(500).json({ message: error.message });
       }
-    case "PATCH":
-      // TODO @Karsten: Diese Zeile durch deine PATCH-Logik ersetzen.
-      // Bitte im catch-Block 'message: error.message' nutzen (Konsistenz für Tests).
-      return response
-        .status(501)
-        .json({ message: "Patch method not implemented yet" });
 
-    case "DELETE":
-      // TODO @Elena: Diese Zeile durch deine DELETE-Logik ersetzen.
-      // Bitte im catch-Block 'message: error.message' nutzen (Konsistenz für Tests).
-      return response
-        .status(501)
-        .json({ message: "Delete method not implemented yet" });
     default:
       return response.status(405).json({ message: "Method not allowed" });
   }
