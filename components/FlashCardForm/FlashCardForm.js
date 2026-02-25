@@ -132,9 +132,9 @@ export default function FlashCardForm({
           Please select a collection
         </option>
 
-        {collections?.map((c) => (
-          <option key={c._id} value={c.name}>
-            {c.name}
+        {collections?.map((collection) => (
+          <option key={collection._id} value={collection.name}>
+            {collection.name}
           </option>
         ))}
       </Select>
