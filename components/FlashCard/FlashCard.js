@@ -34,8 +34,10 @@ const CardBack = styled.article`
 
 const CardHeader = styled.div`
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   background: var(--color-primary);
-  padding: 5px 15px;
+  padding: 5px 0 5px 10px;
 `;
 
 const CollectionTitle = styled.h2`
@@ -110,7 +112,11 @@ export default function FlashCard({ flashcard }) {
       <CardFront onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <StyledLink href="/" aria-label="Edit flascard">
+          <StyledLink
+            href={`/flashcards/${flashcard._id}`}
+            onClick={(e) => e.stopPropagation()}
+            aria-label="Edit flashcard"
+          >
             <Icon icon={faEdit} aria-hidden="true" />
           </StyledLink>
         </CardHeader>
