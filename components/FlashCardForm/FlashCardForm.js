@@ -42,6 +42,7 @@ export default function FlashCardForm({
   initialData = {},
   onSubmit,
   submitLabel = "Add flashcard",
+  onCancel,
 }) {
   const { data: collections } = useSWR("/api/collections");
   const { data: flashcards, mutate } = useSWR("/api/flashcards");
@@ -138,6 +139,17 @@ export default function FlashCardForm({
       <Button type="submit" disabled={isSubmitting}>
         {submitLabel}
       </Button>
+
+      {onCancel ? (
+        <Button
+          type="button"
+          onClick={onCancel}
+          disabled={isSubmitting}
+          aria-label="Cancel editing"
+        >
+          Cancel
+        </Button>
+      ) : null}
     </Form>
   );
 }

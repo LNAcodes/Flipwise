@@ -41,6 +41,7 @@ export default function FlashCardDetailPage() {
         initialData={data}
         onSubmit={handleUpdate}
         submitLabel="Update card"
+        onCancel={() => router.push("/flashcards")}
       />
     </main>
   );
