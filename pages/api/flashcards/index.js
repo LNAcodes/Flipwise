@@ -8,7 +8,7 @@ export default async function handler(request, response) {
   switch (request.method) {
     case "GET":
       try {
-        const flashcards = await Flashcard.find();
+        const flashcards = await Flashcard.find().sort({ createdAt: -1 });
         return response.status(200).json(flashcards);
       } catch (error) {
         return response.status(500).json({ message: error.message });
@@ -19,7 +19,6 @@ export default async function handler(request, response) {
         const flashcard = await Flashcard.create(flashcardData);
         return response.status(201).json(flashcard);
       } catch (error) {
-        console.error(error);
         // @Team: Ich habe den Key von 'error' auf 'message' vereinheitlicht.
         // Grund: Damit unsere API-Antworten konsistent sind (wie beim 405-Fehler)
         // und die Tests einheitlich gegen 'response.body.message' prüfen können.
