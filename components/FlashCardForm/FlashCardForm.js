@@ -103,9 +103,9 @@ export default function FlashCardForm({ initialData = {} }) {
         <option value="" disabled>
           Please select a collection
         </option>
-
+        {console.log(collections)}
         {collections?.map((collection) => (
-          <option key={collection._id} value={collection._id}>
+          <option key={collection._id} value={collection._name}>
             {collection.name}
           </option>
         ))}
