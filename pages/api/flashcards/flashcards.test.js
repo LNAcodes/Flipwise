@@ -53,3 +53,17 @@ describe("API Route: /api/flashcards", () => {
     expect(res.json).toHaveBeenCalledWith({ message: "Method not allowed" });
   });
 });
+describe("GET (api/flashcards - Error Handling", () => {
+  it("should return 500 if the database throws an error", async () => {
+    Flashcard.find.mockRejectedValue(new Error("Database Connection Failed"));
+    const req = createMockReq({ method: "GET" });
+    const res = createMockRes();
+
+    await handler(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith({
+      message: "Database Connection Failed",
+    });
+  });
+});
