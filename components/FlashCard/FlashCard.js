@@ -111,7 +111,6 @@ export default function FlashCard({ flashcard }) {
       <CardFront onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-
           <StyledLink
             href={`/flashcards/${flashcard._id}`}
             onClick={(e) => e.stopPropagation()}
@@ -133,15 +132,6 @@ export default function FlashCard({ flashcard }) {
       <CardBack onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-
-          {/* optional: Edit auch auf der Rückseite */}
-          <StyledLink
-            href={`/flashcards/${flashcard._id}`}
-            onClick={(e) => e.stopPropagation()}
-            aria-label="Edit flashcard"
-          >
-            <Icon icon={faEdit} aria-hidden="true" />
-          </StyledLink>
         </CardHeader>
 
         <CardBody>
