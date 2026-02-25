@@ -1,7 +1,5 @@
 // pages\api\flashcards\index.js
 
-// pages/api/flashcards/index.js
-
 import dbConnect from "@/db/connect";
 import Flashcard from "@/db/models/Flashcard";
 

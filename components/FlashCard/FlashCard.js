@@ -1,143 +1,141 @@
-// components\FlashCard\FlashCard.js
-
-import { useState } from "react";
-import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
-import { useFlipHint } from "@/hooks/useFlipHint";
-import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
-import Link from "next/link";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import useSWR from "swr";
+import { useState } from "react";
 
-/* Styling */
-const CardFront = styled.article`
-  border: 3px solid var(--color-primary);
-  border-radius: 12px;
-  overflow: hidden;
-  background: #d1fcff;
-  margin-top: 10px;
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const CardBack = styled.article`
-  border: 3px solid var(--color-primary);
-  border-radius: 12px;
-  overflow: hidden;
-  background: #d1ffd3;
-  margin-top: 10px;
-  &:hover {
-    cursor: pointer;
-  }
-`;
-
-const CardHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--color-primary);
-  padding: 5px 0 5px 10px;
-`;
-
-const CollectionTitle = styled.h2`
-  color: var(--text-color-light);
-  font-size: 1rem;
-  line-height: 1.2;
-`;
-
-const CardBody = styled.div`
-  padding: 10px;
-  min-height: 120px;
-`;
-const Question = styled.h3`
-  color: #000;
-  font-size: 1rem;
-  line-height: 1.2;
-`;
-const Answer = styled.h3`
-  color: var(--text-color-dark);
-  font-size: 1rem;
-  line-height: 1.2;
-`;
-const Label = styled.p`
-  color: var(--text-color-dark);
-  font-size: 0.7rem;
-  line-height: 0;
-`;
-const StyledLink = styled(Link)`
+const Form = styled.form`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6px;
-  padding: 10px;
-  text-align: center;
-  color: #ccc;
-  text-decoration: none;
-  min-height: 44px;
+  justify-content: center;
+  padding-bottom: 40px;
+`;
 
-  &:hover {
-    color: #ff0000;
+const Label = styled.label`
+  color: #333;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  padding: 5px;
+`;
+const Input = styled.input`
+  &:user-invalid {
+    outline: 2px solid red;
   }
 `;
-const Icon = styled(FontAwesomeIcon)`
-  width: 20px;
-  height: 20px;
-  max-width: none;
-  flex: 0 0 auto;
+const Select = styled.select`
+  &:user-invalid {
+    outline: 2px solid red;
+  }
 `;
+const Hint = styled.p`
+  color: #333;
+  font-size: 0.7rem;
+  line-height: 1;
+  padding: 0 5px;
+  margin-bottom: 10px;
+`;
+const Button = styled.button``;
+const HeadingForm = styled.h2``;
 
-export default function FlashCard({ flashcard }) {
-  const [isFlipped, setIsFlipped] = useState(false);
+export default function FlashCardForm({
+  initialData = {},
+  onSubmit,
+  submitLabel = "Add flashcard",
+}) {
+  const { data: collections } = useSWR("/api/collections");
+  const { data: flashcards, mutate } = useSWR("/api/flashcards");
 
-  // globaler im localstorage gespeicherter state
-  // showHint = boolean - bei true wird hint angezeigt sonst nichtl
-  // markFirstFlip = setzt einmalig "hasFlipped" auf true (global)
-  const { showHint, markFirstFlip } = useFlipHint();
+  const [collection, setCollection] = useState(initialData.collection ?? "");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function flipCard() {
-    markFirstFlip(); // funktionsaufruf -> info: es wurde geflippt
-    setIsFlipped((prev) => !prev); // card flippen (prev wird umgedreht true/false)
+  async function handleSubmit(event) {
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    const formData = new FormData(event.target);
+    const data = Object.fromEntries(formData);
+
+    // EDIT: wenn onSubmit existiert, benutze das
+    if (onSubmit) {
+      await onSubmit(data);
+      setIsSubmitting(false);
+      return;
+    }
+
+    // CREATE: sonst wie gehabt POST
+    const response = await fetch("/api/flashcards", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+
+    if (response.ok) {
+      const newFlashcard = await response.json();
+      mutate([newFlashcard, ...(flashcards ?? [])], false);
+      event.target.reset();
+      setCollection("");
+    }
+
+    setIsSubmitting(false);
   }
 
   return (
-    <ReactCardFlip
-      flipDirection="horizontal"
-      flipSpeedBackToFront="0.4"
-      flipSpeedFrontToBack="0.4"
-      isFlipped={isFlipped}
-    >
-      {/* FRONT */}
-      <CardFront onClick={flipCard}>
-        <CardHeader>
-          <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <StyledLink
-            href={`/flashcards/${flashcard._id}`}
-            onClick={(e) => e.stopPropagation()}
-            aria-label="Edit flashcard"
-          >
-            <Icon icon={faEdit} aria-hidden="true" />
-          </StyledLink>
-        </CardHeader>
-        <CardBody>
-          <Label>Question</Label>
-          <Question>{flashcard.question}</Question>
-        </CardBody>
-        <FlashCardFooter showHint={showHint} text="Tap to show answer" />
-      </CardFront>
+    <Form data-js="flashCardForm" onSubmit={handleSubmit}>
+      <HeadingForm>
+        {onSubmit ? "Edit flashcard" : "Add a new flashcard"}
+      </HeadingForm>
 
-      {/* BACK */}
-      <CardBack onClick={flipCard}>
-        <CardHeader>
-          <CollectionTitle>{flashcard.collection}</CollectionTitle>
-        </CardHeader>
-        <CardBody>
-          <Label>Answer</Label>
-          <Answer>{flashcard.answer}</Answer>
-        </CardBody>
-        <FlashCardFooter showHint={showHint} text="Tap to show question" />
-      </CardBack>
-    </ReactCardFlip>
+      <Label htmlFor="question">Question</Label>
+      <Input
+        name="question"
+        id="question"
+        required
+        type="text"
+        defaultValue={initialData.question ?? ""}
+        minLength="15"
+        maxLength="100"
+        placeholder="Insert a question"
+        aria-describedby="question-hint"
+      />
+      <Hint id="question-hint">Please enter a question.</Hint>
+
+      <Label htmlFor="answer">Answer</Label>
+      <Input
+        name="answer"
+        id="answer"
+        required
+        type="text"
+        defaultValue={initialData.answer ?? ""}
+        minLength="40"
+        maxLength="120"
+        placeholder="Insert an answer"
+        aria-describedby="answer-hint"
+      />
+      <Hint id="answer-hint">Please insert an answer.</Hint>
+
+      <Label htmlFor="collection">Collection</Label>
+      <Select
+        id="collection"
+        name="collection"
+        required
+        value={collection}
+        onChange={(event) => setCollection(event.target.value)}
+      >
+        <option value="" disabled>
+          Please select a collection
+        </option>
+
+        {collections?.map((c) => (
+          <option key={c._id} value={c.name}>
+            {c.name}
+          </option>
+        ))}
+      </Select>
+
+      <Hint>Please select a collection.</Hint>
+
+      <Button type="submit" disabled={isSubmitting}>
+        {submitLabel}
+      </Button>
+    </Form>
   );
 }
