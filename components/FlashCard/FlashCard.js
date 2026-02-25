@@ -5,6 +5,9 @@ import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
 import { useFlipHint } from "@/hooks/useFlipHint";
 import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 /* Styling */
 const CardFront = styled.article`
@@ -30,6 +33,7 @@ const CardBack = styled.article`
 `;
 
 const CardHeader = styled.div`
+  display: flex;
   background: var(--color-primary);
   padding: 5px 15px;
 `;
@@ -59,6 +63,28 @@ const Label = styled.p`
   font-size: 0.7rem;
   line-height: 0;
 `;
+const StyledLink = styled(Link)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 10px;
+  text-align: center;
+  color: #ccc;
+  text-decoration: none;
+  min-height: 44px;
+
+  &:hover {
+    color: #ff0000;
+  }
+`;
+const Icon = styled(FontAwesomeIcon)`
+  width: 20px;
+  height: 20px;
+  max-width: none;
+  flex: 0 0 auto;
+`;
 
 export default function FlashCard({ flashcard }) {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -84,6 +110,9 @@ export default function FlashCard({ flashcard }) {
       <CardFront onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
+          <StyledLink href="/" aria-label="Edit flascard">
+            <Icon icon={faEdit} aria-hidden="true" />
+          </StyledLink>
         </CardHeader>
         <CardBody>
           <Label>Question</Label>
