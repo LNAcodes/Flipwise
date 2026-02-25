@@ -1,141 +1,156 @@
-import styled from "styled-components";
-import useSWR from "swr";
+// components/FlashCard/FlashCard.js
+
 import { useState } from "react";
+import ReactCardFlip from "react-card-flip";
+import styled from "styled-components";
+import { useFlipHint } from "@/hooks/useFlipHint";
+import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
+import Link from "next/link";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
-const Form = styled.form`
+/* Styling */
+const CardFront = styled.article`
+  border: 3px solid var(--color-primary);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #d1fcff;
+  margin-top: 10px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const CardBack = styled.article`
+  border: 3px solid var(--color-primary);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #d1ffd3;
+  margin-top: 10px;
+
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const CardHeader = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding-bottom: 40px;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--color-primary);
+  padding: 5px 0 5px 10px;
 `;
 
-const Label = styled.label`
-  color: #333;
+const CollectionTitle = styled.h2`
+  color: var(--text-color-light);
   font-size: 1rem;
-  font-weight: 700;
   line-height: 1.2;
-  padding: 5px;
 `;
-const Input = styled.input`
-  &:user-invalid {
-    outline: 2px solid red;
-  }
+
+const CardBody = styled.div`
+  padding: 10px;
+  min-height: 120px;
 `;
-const Select = styled.select`
-  &:user-invalid {
-    outline: 2px solid red;
-  }
+
+const Question = styled.h3`
+  color: #000;
+  font-size: 1rem;
+  line-height: 1.2;
 `;
-const Hint = styled.p`
-  color: #333;
+
+const Answer = styled.h3`
+  color: var(--text-color-dark);
+  font-size: 1rem;
+  line-height: 1.2;
+`;
+
+const Label = styled.p`
+  color: var(--text-color-dark);
   font-size: 0.7rem;
-  line-height: 1;
-  padding: 0 5px;
-  margin-bottom: 10px;
+  line-height: 0;
 `;
-const Button = styled.button``;
-const HeadingForm = styled.h2``;
 
-export default function FlashCardForm({
-  initialData = {},
-  onSubmit,
-  submitLabel = "Add flashcard",
-}) {
-  const { data: collections } = useSWR("/api/collections");
-  const { data: flashcards, mutate } = useSWR("/api/flashcards");
+const StyledLink = styled(Link)`
+  gap: 6px;
+  padding: 10px;
+  text-align: center;
+  color: #fff;
+  text-decoration: none;
+  min-height: 44px;
 
-  const [collection, setCollection] = useState(initialData.collection ?? "");
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  &:hover {
+    color: var(--color-accent);
+  }
+`;
 
-  async function handleSubmit(event) {
-    event.preventDefault();
-    setIsSubmitting(true);
+const Icon = styled(FontAwesomeIcon)`
+  width: 20px;
+  height: 20px;
+  max-width: none;
+  flex: 0 0 auto;
+`;
 
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData);
+export default function FlashCard({ flashcard }) {
+  const [isFlipped, setIsFlipped] = useState(false);
+  const { showHint, markFirstFlip } = useFlipHint();
 
-    // EDIT: wenn onSubmit existiert, benutze das
-    if (onSubmit) {
-      await onSubmit(data);
-      setIsSubmitting(false);
-      return;
-    }
-
-    // CREATE: sonst wie gehabt POST
-    const response = await fetch("/api/flashcards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
-
-    if (response.ok) {
-      const newFlashcard = await response.json();
-      mutate([newFlashcard, ...(flashcards ?? [])], false);
-      event.target.reset();
-      setCollection("");
-    }
-
-    setIsSubmitting(false);
+  function flipCard() {
+    markFirstFlip();
+    setIsFlipped((prev) => !prev);
   }
 
   return (
-    <Form data-js="flashCardForm" onSubmit={handleSubmit}>
-      <HeadingForm>
-        {onSubmit ? "Edit flashcard" : "Add a new flashcard"}
-      </HeadingForm>
+    <ReactCardFlip
+      flipDirection="horizontal"
+      flipSpeedBackToFront="0.4"
+      flipSpeedFrontToBack="0.4"
+      isFlipped={isFlipped}
+    >
+      {/* FRONT */}
+      <CardFront onClick={flipCard}>
+        <CardHeader>
+          <CollectionTitle>{flashcard.collection}</CollectionTitle>
 
-      <Label htmlFor="question">Question</Label>
-      <Input
-        name="question"
-        id="question"
-        required
-        type="text"
-        defaultValue={initialData.question ?? ""}
-        minLength="15"
-        maxLength="100"
-        placeholder="Insert a question"
-        aria-describedby="question-hint"
-      />
-      <Hint id="question-hint">Please enter a question.</Hint>
+          <StyledLink
+            href={`/flashcards/${flashcard._id}`}
+            onClick={(e) => e.stopPropagation()}
+            aria-label="Edit flashcard"
+          >
+            <Icon icon={faEdit} aria-hidden="true" />
+          </StyledLink>
+        </CardHeader>
 
-      <Label htmlFor="answer">Answer</Label>
-      <Input
-        name="answer"
-        id="answer"
-        required
-        type="text"
-        defaultValue={initialData.answer ?? ""}
-        minLength="40"
-        maxLength="120"
-        placeholder="Insert an answer"
-        aria-describedby="answer-hint"
-      />
-      <Hint id="answer-hint">Please insert an answer.</Hint>
+        <CardBody>
+          <Label>Question</Label>
+          <Question>{flashcard.question}</Question>
+        </CardBody>
 
-      <Label htmlFor="collection">Collection</Label>
-      <Select
-        id="collection"
-        name="collection"
-        required
-        value={collection}
-        onChange={(event) => setCollection(event.target.value)}
-      >
-        <option value="" disabled>
-          Please select a collection
-        </option>
+        <FlashCardFooter showHint={showHint} text="Tap to show answer" />
+      </CardFront>
 
-        {collections?.map((c) => (
-          <option key={c._id} value={c.name}>
-            {c.name}
-          </option>
-        ))}
-      </Select>
+      {/* BACK */}
+      <CardBack onClick={flipCard}>
+        <CardHeader>
+          <CollectionTitle>{flashcard.collection}</CollectionTitle>
 
-      <Hint>Please select a collection.</Hint>
+          {/* optional: Edit auch auf der Rückseite */}
+          <StyledLink
+            href={`/flashcards/${flashcard._id}`}
+            onClick={(e) => e.stopPropagation()}
+            aria-label="Edit flashcard"
+          >
+            <Icon icon={faEdit} aria-hidden="true" />
+          </StyledLink>
+        </CardHeader>
 
-      <Button type="submit" disabled={isSubmitting}>
-        {submitLabel}
-      </Button>
-    </Form>
+        <CardBody>
+          <Label>Answer</Label>
+          <Answer>{flashcard.answer}</Answer>
+        </CardBody>
+
+        <FlashCardFooter showHint={showHint} text="Tap to show question" />
+      </CardBack>
+    </ReactCardFlip>
   );
 }
