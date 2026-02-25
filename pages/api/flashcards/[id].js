@@ -1,45 +1,37 @@
-import useSWR from "swr";
-import { useRouter } from "next/router";
-import FlashCardForm from "@/components/FlashCardForm/FlashCardForm";
-import { useSWRConfig } from "swr";
+// pages/api/flashcards/[id].js
 
-export default function FlashCardDetailPage() {
-  const router = useRouter();
-  const { id } = router.query;
-  const { mutate } = useSWRConfig();
+import dbConnect from "@/db/connect";
+import Flashcard from "@/db/models/Flashcard";
 
-  const { data, error, isLoading } = useSWR(
-    id ? `/api/flashcards/${id}` : null
-  );
+export default async function handler(req, res) {
+  await dbConnect();
 
-  if (error) return <p>Error loading</p>;
-  if (isLoading || !id) return <p>Loading data... Please wait...</p>;
-  if (!data) return <h1>FlashCard not found</h1>;
+  const { id } = req.query;
 
-  async function handleUpdate(updatedData) {
-    const res = await fetch(`/api/flashcards/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedData),
-    });
-
-    if (!res.ok) return;
-
-    const updated = await res.json();
-    mutate(`/api/flashcards/${id}`, updated, false);
-    mutate("/api/flashcards");
-
-    router.push("/flashcards");
+  if (req.method === "GET") {
+    try {
+      const flashcard = await Flashcard.findById(id);
+      if (!flashcard) return res.status(404).json({ message: "Not found" });
+      return res.status(200).json(flashcard);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
   }
 
-  return (
-    <main>
-      <h1>Edit FlashCard</h1>
-      <FlashCardForm
-        initialData={data}
-        onSubmit={handleUpdate}
-        submitLabel="Update card"
-      />
-    </main>
-  );
+  if (req.method === "PATCH" || req.method === "PUT") {
+    try {
+      const updated = await Flashcard.findByIdAndUpdate(id, req.body, {
+        new: true,
+        runValidators: true,
+      });
+
+      if (!updated) return res.status(404).json({ message: "Not found" });
+
+      return res.status(200).json(updated);
+    } catch (error) {
+      return res.status(500).json({ error: error.message });
+    }
+  }
+
+  return res.status(405).json({ message: "Method not allowed" });
 }

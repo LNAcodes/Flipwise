@@ -107,7 +107,7 @@ export default function FlashCardForm({
         required
         type="text"
         defaultValue={initialData.answer ?? ""}
-        minLength="40"
+        minLength="15"
         maxLength="120"
         placeholder="Insert an answer"
         aria-describedby="answer-hint"
