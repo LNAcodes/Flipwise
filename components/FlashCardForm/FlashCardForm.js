@@ -48,7 +48,6 @@ export default function FlashCardForm({ initialData = {} }) {
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
     const newFlashcard = { ...data, _id: crypto.randomUUID() };
-
     mutate([newFlashcard, ...flashcards], false);
 
     const response = await fetch("/api/flashcards", {
@@ -60,8 +59,7 @@ export default function FlashCardForm({ initialData = {} }) {
     });
 
     if (response.ok) {
-      const showFlashcard = await response.json();
-      mutate([showFlashcard, ...flashcards], false);
+      mutate();
       event.target.reset();
       setCollection("");
     }
