@@ -3,35 +3,35 @@
 import dbConnect from "@/db/connect";
 import Flashcard from "@/db/models/Flashcard";
 
-export default async function handler(req, res) {
+export default async function handler(request, result) {
   await dbConnect();
 
-  const { id } = req.query;
+  const { id } = request.query;
 
-  if (req.method === "GET") {
+  if (request.method === "GET") {
     try {
       const flashcard = await Flashcard.findById(id);
-      if (!flashcard) return res.status(404).json({ message: "Not found" });
-      return res.status(200).json(flashcard);
+      if (!flashcard) return result.status(404).json({ message: "Not found" });
+      return result.status(200).json(flashcard);
     } catch (error) {
-      return res.status(500).json({ error: error.message });
+      return result.status(500).json({ error: error.message });
     }
   }
 
-  if (req.method === "PATCH" || req.method === "PUT") {
+  if (["PATCH", "PUT"].includes(request.method)) {
     try {
-      const updated = await Flashcard.findByIdAndUpdate(id, req.body, {
+      const updated = await Flashcard.findByIdAndUpdate(id, request.body, {
         new: true,
         runValidators: true,
       });
 
-      if (!updated) return res.status(404).json({ message: "Not found" });
+      if (!updated) return result.status(404).json({ message: "Not found" });
 
-      return res.status(200).json(updated);
+      return result.status(200).json(updated);
     } catch (error) {
-      return res.status(500).json({ error: error.message });
+      return result.status(500).json({ error: error.message });
     }
   }
 
-  return res.status(405).json({ message: "Method not allowed" });
+  return result.status(405).json({ message: "Method not allowed" });
 }
