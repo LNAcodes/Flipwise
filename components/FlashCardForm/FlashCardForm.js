@@ -77,10 +77,6 @@ export default function FlashCardForm({
 
   return (
     <Form data-js="flashCardForm" onSubmit={handleSubmit}>
-      <HeadingForm>
-        {onSubmit ? "Edit flashcard" : "Add a new flashcard"}
-      </HeadingForm>
-
       <Label htmlFor="question">Question</Label>
       <Input
         name="question"
