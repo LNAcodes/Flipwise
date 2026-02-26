@@ -1,3 +1,5 @@
+// components\FlashCardForm\FlashCardForm.js
+
 import styled from "styled-components";
 import useSWR from "swr";
 import { useState } from "react";
@@ -26,6 +28,11 @@ const Select = styled.select`
     outline: 2px solid red;
   }
 `;
+
+const Button = styled.button`
+  margin: 10px 0;
+`;
+
 const Hint = styled.p`
   color: #333;
   font-size: 0.7rem;
@@ -33,90 +40,109 @@ const Hint = styled.p`
   padding: 0 5px;
   margin-bottom: 10px;
 `;
-const Button = styled.button``;
+
 const HeadingForm = styled.h2``;
 
-export default function FlashCardForm({ initialData = {} }) {
-  const [collection, setCollection] = useState("");
+export default function FlashCardForm({
+  initialData = {},
+  onSubmit,
+  submitLabel = "Add flashcard",
+  onCancel,
+  cancelLabel = "Cancel",
+  resetOnSuccess = false,
+}) {
   const { data: collections } = useSWR("/api/collections");
-  const { data: flashcards, mutate } = useSWR("/api/flashcards");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event) {
     event.preventDefault();
     setIsSubmitting(true);
+
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
-    const newFlashcard = { ...data, _id: crypto.randomUUID() };
-    mutate([newFlashcard, ...flashcards], false);
 
-    const response = await fetch("/api/flashcards", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(data),
-    });
+    try {
+      await onSubmit(data);
 
-    if (response.ok) {
-      mutate();
-      event.target.reset();
-      setCollection("");
+      if (resetOnSuccess) {
+        // mutate();
+        event.target.reset();
+      }
+    } catch (error) {
+      setSubmitError(error?.message ?? "Submit error.");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   }
+
   return (
     <Form data-js="flashCardForm" onSubmit={handleSubmit}>
-      <HeadingForm>Add a new flashcard</HeadingForm>
+      <HeadingForm>
+        {onSubmit ? "Edit flashcard" : "Add a new flashcard"}
+      </HeadingForm>
+
       <Label htmlFor="question">Question</Label>
       <Input
         name="question"
         id="question"
         required
         type="text"
-        defaultValue=""
+        defaultValue={initialData.question ?? ""}
         minLength="15"
         maxLength="100"
         placeholder="Insert a question"
         aria-describedby="question-hint"
       />
       <Hint id="question-hint">Please enter a question.</Hint>
+
       <Label htmlFor="answer">Answer</Label>
       <Input
         name="answer"
         id="answer"
         required
         type="text"
-        defaultValue=""
-        minLength="40"
+        defaultValue={initialData.answer ?? ""}
+        minLength="15"
         maxLength="120"
         placeholder="Insert an answer"
         aria-describedby="answer-hint"
       />
       <Hint id="answer-hint">Please insert an answer.</Hint>
+
       <Label htmlFor="collection">Collection</Label>
       <Select
         id="collection"
         name="collection"
         required
-        value={collection}
-        onChange={(event) => setCollection(event.target.value)}
+        defaultValue={initialData.collection ?? ""}
       >
         <option value="" disabled>
           Please select a collection
         </option>
 
         {collections?.map((collection) => (
-          <option key={collection._id} value={collection._name}>
+          <option key={collection._id} value={collection.name}>
             {collection.name}
           </option>
         ))}
       </Select>
-      <Hint id="comment-collecion">Please select a collection.</Hint>
-      <Button type="submit" aria-label="Add flashcard" disabled={isSubmitting}>
-        Add flashcard
+
+      <Hint>Please select a collection.</Hint>
+
+      <Button type="submit" disabled={isSubmitting}>
+        {submitLabel}
       </Button>
+
+      {onCancel ? (
+        <Button
+          type="button"
+          onClick={onCancel}
+          disabled={isSubmitting}
+          aria-label="Cancel editing"
+        >
+          {cancelLabel}
+        </Button>
+      ) : null}
     </Form>
   );
 }
