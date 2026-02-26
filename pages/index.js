@@ -16,17 +16,17 @@ export default function HomePage() {
   const { mutate } = useSWR("/api/flashcards");
   const {
     data: flashcards,
-    error: errorCards,
-    isLoading: loadingCards,
+    error: cardsError,
+    isLoading: cardsLoading,
   } = useSWR("/api/flashcards");
   const {
     data: collections,
-    error: erroColls,
-    isLoading: loadingColls,
+    error: collectionsError,
+    isLoading: collectionsLoading,
   } = useSWR("/api/collections");
 
-  if (errorCards || erroColls) return <p>Error loading</p>;
-  if (loadingCards || loadingColls)
+  if (cardsError || collectionsError) return <p>Error loading</p>;
+  if (cardsLoading || collectionsLoading)
     return <p>Loading data... Please wait...</p>;
   const enrichedFlashcards = flashcards.map((card) => {
     const matchingCollection = collections.find(
