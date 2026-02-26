@@ -48,6 +48,7 @@ export default function FlashCardForm({
   onSubmit,
   submitLabel = "Add flashcard",
   onCancel,
+  cancelLabel = "Cancel",
   resetOnSuccess = false,
 }) {
   const { data: collections } = useSWR("/api/collections");
@@ -147,7 +148,7 @@ export default function FlashCardForm({
           disabled={isSubmitting}
           aria-label="Cancel editing"
         >
-          Cancel
+          {cancelLabel}
         </Button>
       ) : null}
     </Form>
