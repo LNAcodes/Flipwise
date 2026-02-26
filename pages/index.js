@@ -13,12 +13,6 @@ const Title = styled.h1`
 `;
 
 export default function HomePage() {
-  /* <<<<<<< HEAD
-  const { data, error, isLoading, mutate } = useSWR("/api/flashcards");
-
-  if (error) return <p>Error loading</p>;
-  if (isLoading) return <p>Loading data... Please wait...</p>;
-======= */
   const { mutate } = useSWR("/api/flashcards");
   const {
     data: flashcards,
@@ -43,7 +37,6 @@ export default function HomePage() {
       color: matchingCollection ? matchingCollection.color : "#defaultColor#",
     };
   });
-  /* >>>>>>> feature/collection-collors-T08 */
 
   async function handleAddCard(flashcards) {
     const newFlashcard = { ...flashcards, _id: crypto.randomUUID() };
