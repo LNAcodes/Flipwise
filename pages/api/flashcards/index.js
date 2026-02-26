@@ -8,7 +8,7 @@ export default async function handler(request, response) {
   switch (request.method) {
     case "GET":
       try {
-        const flashcards = await Flashcard.find();
+        const flashcards = await Flashcard.find().sort({ createdAt: -1 });
         return response.status(200).json(flashcards);
       } catch (error) {
         return response.status(500).json({ message: error.message });
