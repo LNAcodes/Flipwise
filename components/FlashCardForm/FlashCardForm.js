@@ -50,8 +50,7 @@ export default function FlashCardForm({
   onCancel,
 }) {
   const { data: collections } = useSWR("/api/collections");
-  const { data: flashcards, mutate } = useSWR("/api/flashcards");
-
+  const { data: mutate } = useSWR("/api/flashcards");
   const [collection, setCollection] = useState(initialData.collection ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,14 +62,7 @@ export default function FlashCardForm({
     const data = Object.fromEntries(formData);
 
     const newFlashcard = { ...data, _id: crypto.randomUUID() };
-    mutate([newFlashcard, ...flashcards], false);
-
-    // EDIT:
-    if (onSubmit) {
-      await onSubmit(data);
-      setIsSubmitting(false);
-      return;
-    }
+    mutate((prev) => [newFlashcard, ...prev], false);
 
     // CREATE:
     const response = await fetch("/api/flashcards", {
