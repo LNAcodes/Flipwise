@@ -2,6 +2,11 @@
 
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
+import styled from "styled-components";
+
+const PageTitle = styled.h1`
+  padding: 0;
+`;
 
 export default function FlashcardsPage() {
   const { data, error, isLoading } = useSWR("/api/flashcards");
@@ -11,7 +16,7 @@ export default function FlashcardsPage() {
 
   return (
     <>
-      <h1>Card List</h1>
+      <PageTitle>Card List</PageTitle>
       <FlashCardList flashcards={data} />
     </>
   );
