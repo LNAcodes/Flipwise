@@ -48,6 +48,7 @@ export default function FlashCardForm({
   onSubmit,
   submitLabel = "Add flashcard",
   onCancel,
+  resetOnSuccess = false,
 }) {
   const { data: collections } = useSWR("/api/collections");
   const { mutate } = useSWR("/api/flashcards");
@@ -67,13 +68,14 @@ export default function FlashCardForm({
     try {
       await onSubmit(data);
 
-      if (response.ok) {
+      if (resetOnSuccess) {
         mutate();
         event.target.reset();
         setCollection("");
       }
     } catch (error) {
       console.log(error.message);
+      setSubmitError(error?.message ?? "Submit error.");
     } finally {
       setIsSubmitting(false);
     }

@@ -41,6 +41,7 @@ export default function HomePage() {
         title="Add a new flashcard"
         submitLabel="Add flashcard"
         onSubmit={handleAddCard}
+        resetOnSuccess
       />
       <FlashCardList flashcards={data} />
     </main>
