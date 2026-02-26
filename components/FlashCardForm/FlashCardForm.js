@@ -53,7 +53,6 @@ export default function FlashCardForm({
 }) {
   const { data: collections } = useSWR("/api/collections");
   const { mutate } = useSWR("/api/flashcards");
-  //   const [collection, setCollection] = useState(initialData.collection ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event) {
@@ -72,10 +71,8 @@ export default function FlashCardForm({
       if (resetOnSuccess) {
         mutate();
         event.target.reset();
-        // setCollection("");
       }
     } catch (error) {
-      console.log(error.message);
       setSubmitError(error?.message ?? "Submit error.");
     } finally {
       setIsSubmitting(false);
