@@ -1,5 +1,5 @@
 // components\FlashCard\FlashCard.js
-
+import useSWR from "swr";
 import { useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
@@ -60,6 +60,10 @@ const Label = styled.p`
   line-height: 0;
 `;
 
+const Button = styled.button``;
+const P = styled.p``;
+const Span = styled.span``;
+
 export default function FlashCard({ flashcard }) {
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -67,11 +71,22 @@ export default function FlashCard({ flashcard }) {
   // showHint = boolean - bei true wird hint angezeigt sonst nichtl
   // markFirstFlip = setzt einmalig "hasFlipped" auf true (global)
   const { showHint, markFirstFlip } = useFlipHint();
+  const { data, isLoading, mutate } = useSWR(`/api/flashcards/${id}`);
+
+  const [confirm, setConfirm] = useState(false);
 
   function flipCard() {
     markFirstFlip(); // funktionsaufruf -> info: es wurde geflippt
     setIsFlipped((prev) => !prev); // card flippen (prev wird umgedreht true/false)
   }
+  const handleDelete = async () => {
+    const response = await fetch(`/api/flashcards/${id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      mutate();
+    }
+  };
 
   return (
     <ReactCardFlip
@@ -84,6 +99,18 @@ export default function FlashCard({ flashcard }) {
       <CardFront onClick={flipCard}>
         <CardHeader>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
+          <Button onClick={() => setConfirm(!confirm)}>
+            <Span role="img" aria-label="a trashbin indicating deletion">
+              🗑️
+            </Span>
+          </Button>
+          {confirm && (
+            <>
+              <P>Are you sure?</P>
+              <Button onClick={() => setConfirm(false)}>Cancel</Button>
+              <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
+            </>
+          )}
         </CardHeader>
         <CardBody>
           <Label>Question</Label>
