@@ -53,7 +53,7 @@ export default function FlashCardForm({
 }) {
   const { data: collections } = useSWR("/api/collections");
   const { mutate } = useSWR("/api/flashcards");
-  const [collection, setCollection] = useState(initialData.collection ?? "");
+  //   const [collection, setCollection] = useState(initialData.collection ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event) {
@@ -72,7 +72,7 @@ export default function FlashCardForm({
       if (resetOnSuccess) {
         mutate();
         event.target.reset();
-        setCollection("");
+        // setCollection("");
       }
     } catch (error) {
       console.log(error.message);
@@ -121,8 +121,7 @@ export default function FlashCardForm({
         id="collection"
         name="collection"
         required
-        value={collection}
-        onChange={(event) => setCollection(event.target.value)}
+        defaultValue={initialData.collection ?? ""}
       >
         <option value="" disabled>
           Please select a collection
