@@ -64,20 +64,19 @@ export default function FlashCardForm({
     const newFlashcard = { ...data, _id: crypto.randomUUID() };
     mutate((prev) => [newFlashcard, ...prev], false);
 
-    // CREATE:
-    const response = await fetch("/api/flashcards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+    try {
+      await onSubmit(data);
 
-    if (response.ok) {
-      mutate();
-      event.target.reset();
-      setCollection("");
+      if (response.ok) {
+        mutate();
+        event.target.reset();
+        setCollection("");
+      }
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setIsSubmitting(false);
     }
-
-    setIsSubmitting(false);
   }
 
   return (
