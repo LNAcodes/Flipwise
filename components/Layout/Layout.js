@@ -1,6 +1,7 @@
 // components/Layout/Layout.js
 import styled from "styled-components";
 import Header from "@/components/Header/Header";
+import Footer from "@/components/Footer/Footer";
 
 const Wrapper = styled.div`
   min-height: 100vh;
@@ -17,6 +18,7 @@ export default function Layout({ children }) {
     <Wrapper>
       <Header />
       <Main>{children}</Main>
+      <Footer />
     </Wrapper>
   );
 }

@@ -56,7 +56,7 @@ export default function HomePage() {
   }
 
   return (
-    <main>
+    <>
       <Title>Homepage</Title>
 
       <FlashCardForm
@@ -67,6 +67,6 @@ export default function HomePage() {
         resetOnSuccess
       />
       <FlashCardList flashcards={enrichedFlashcards} />
-    </main>
+    </>
   );
 }
