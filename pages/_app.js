@@ -2,7 +2,7 @@
 
 import GlobalStyle from "../styles";
 import { SWRConfig } from "swr";
-import Header from "@/components/Header/Header";
+import Layout from "@/components/Layout/Layout";
 
 const fetcher = async (url) => {
   const res = await fetch(url);
@@ -19,12 +19,14 @@ const fetcher = async (url) => {
 };
 
 export default function App({ Component, pageProps }) {
+  const meta = Component.meta ?? {};
   return (
     <>
       <GlobalStyle />
       <SWRConfig value={{ fetcher }}>
-        <Header />
-        <Component {...pageProps} />
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
       </SWRConfig>
     </>
   );
