@@ -52,7 +52,6 @@ export default function FlashCardForm({
   resetOnSuccess = false,
 }) {
   const { data: collections } = useSWR("/api/collections");
-  const { mutate } = useSWR("/api/flashcards");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event) {
@@ -62,14 +61,11 @@ export default function FlashCardForm({
     const formData = new FormData(event.target);
     const data = Object.fromEntries(formData);
 
-    const newFlashcard = { ...data, _id: crypto.randomUUID() };
-    mutate((prev) => [newFlashcard, ...prev], false);
-
     try {
       await onSubmit(data);
 
       if (resetOnSuccess) {
-        mutate();
+        // mutate();
         event.target.reset();
       }
     } catch (error) {

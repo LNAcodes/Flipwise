@@ -4,7 +4,6 @@ import FlashCardForm from "@/components/FlashCardForm/FlashCardForm";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
 import useSWR from "swr";
-import { useSWRConfig } from "swr";
 
 const Title = styled.h1`
   color: #000;
@@ -14,13 +13,15 @@ const Title = styled.h1`
 `;
 
 export default function HomePage() {
-  const { data, error, isLoading } = useSWR("/api/flashcards");
-  const { mutate } = useSWRConfig();
+  const { data, error, isLoading, mutate } = useSWR("/api/flashcards");
 
   if (error) return <p>Error loading</p>;
   if (isLoading) return <p>Loading data... Please wait...</p>;
 
   async function handleAddCard(data) {
+    const newFlashcard = { ...data, _id: crypto.randomUUID() };
+    mutate((prev) => [newFlashcard, ...prev], false);
+
     const result = await fetch("/api/flashcards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -31,7 +32,7 @@ export default function HomePage() {
       throw new Error("Could not create flashcard.");
     }
     // lade die liste neu
-    await mutate("/api/flashcards");
+    await mutate();
   }
 
   return (

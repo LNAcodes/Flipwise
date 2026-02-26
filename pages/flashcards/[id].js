@@ -10,7 +10,7 @@ export default function FlashCardDetailPage() {
 
   // nur fetchen wenn route 'id' existiet, sonst gib 'null' weiter
   const flashcardUrl = id ? `/api/flashcards/${id}` : null;
-  const { data, error, isLoading, mutate } = useSWR(flashcardUrl);
+  const { data, error, isLoading } = useSWR(flashcardUrl);
 
   if (error) return <p>Error loading</p>;
   if (isLoading || !id) return <p>Loading data... Please wait...</p>;
@@ -23,10 +23,9 @@ export default function FlashCardDetailPage() {
       body: JSON.stringify(updatedData),
     });
 
-    if (!result.ok) return;
-
-    const updated = await result.json();
-    mutate(updated, false);
+    if (!result.ok) {
+      throw new Error("Could not update flashcard.");
+    }
 
     router.push("/flashcards");
   }
