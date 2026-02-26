@@ -1,4 +1,5 @@
 // components/Footer/Footer.js
+import Navbar from "@/components/Navbar/Navbar";
 import styled from "styled-components";
 
 const StyledFooter = styled.footer`
@@ -14,8 +15,7 @@ const StyledFooter = styled.footer`
 export default function Footer() {
   return (
     <StyledFooter>
-      <p>Footer</p>
-      {/* <Navbar /> */}
+      <Navbar />
     </StyledFooter>
   );
 }

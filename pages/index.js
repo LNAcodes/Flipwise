@@ -50,6 +50,7 @@ export default function HomePage() {
 
   return (
     <>
+      <h1>Home (Dashbord)</h1>
       <FlashCardForm
         title="Add a new Card"
         submitLabel="Add Card"
