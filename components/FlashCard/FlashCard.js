@@ -11,7 +11,7 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 /* Styling */
 const CardFront = styled.article`
-  border: 3px solid var(--color-primary);
+  border: 3px solid ${(props) => props.$color || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
   background: #d1fcff;
@@ -23,7 +23,7 @@ const CardFront = styled.article`
 `;
 
 const CardBack = styled.article`
-  border: 3px solid var(--color-primary);
+  border: 3px solid ${(props) => props.$color || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
   background: #d1ffd3;
@@ -38,7 +38,7 @@ const CardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--color-primary);
+  background: ${(props) => props.$color || "var(--color-primary)"};
   padding: 5px 0 5px 10px;
 `;
 
@@ -108,8 +108,8 @@ export default function FlashCard({ flashcard }) {
       isFlipped={isFlipped}
     >
       {/* FRONT */}
-      <CardFront onClick={flipCard}>
-        <CardHeader>
+      <CardFront $color={flashcard.color} onClick={flipCard}>
+        <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
           <StyledLink
             href={`/flashcards/${flashcard._id}`}
@@ -129,8 +129,8 @@ export default function FlashCard({ flashcard }) {
       </CardFront>
 
       {/* BACK */}
-      <CardBack onClick={flipCard}>
-        <CardHeader>
+      <CardBack $color={flashcard.color} onClick={flipCard}>
+        <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
 

@@ -13,19 +13,39 @@ const Title = styled.h1`
 `;
 
 export default function HomePage() {
-  const { data, error, isLoading, mutate } = useSWR("/api/flashcards");
+  const { mutate } = useSWR("/api/flashcards");
+  const {
+    data: flashcards,
+    error: errorCards,
+    isLoading: loadingCards,
+  } = useSWR("/api/flashcards");
+  const {
+    data: collections,
+    error: erroColls,
+    isLoading: loadingColls,
+  } = useSWR("/api/collections");
 
-  if (error) return <p>Error loading</p>;
-  if (isLoading) return <p>Loading data... Please wait...</p>;
+  if (errorCards || erroColls) return <p>Error loading</p>;
+  if (loadingCards || loadingColls)
+    return <p>Loading data... Please wait...</p>;
+  const enrichedFlashcards = flashcards.map((card) => {
+    const matchingCollection = collections.find(
+      (col) => col.name === card.collection
+    );
+    return {
+      ...card,
+      color: matchingCollection ? matchingCollection.color : "#defaultColor#",
+    };
+  });
 
-  async function handleAddCard(data) {
-    const newFlashcard = { ...data, _id: crypto.randomUUID() };
+  async function handleAddCard(flashcards) {
+    const newFlashcard = { ...flashcards, _id: crypto.randomUUID() };
     mutate((prev) => [newFlashcard, ...prev], false);
 
     const result = await fetch("/api/flashcards", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
+      body: JSON.stringify(flashcards),
     });
 
     if (!result.ok) {
@@ -38,6 +58,7 @@ export default function HomePage() {
   return (
     <main>
       <Title>Homepage</Title>
+
       <FlashCardForm
         title="Add a new Card"
         submitLabel="Add Card"
@@ -45,7 +66,7 @@ export default function HomePage() {
         cancelLabel="Cancel"
         resetOnSuccess
       />
-      <FlashCardList flashcards={data} />
+      <FlashCardList flashcards={enrichedFlashcards} />
     </main>
   );
 }
