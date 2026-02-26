@@ -38,8 +38,8 @@ export default function HomePage() {
     <main>
       <Title>Homepage</Title>
       <FlashCardForm
-        title="Add a new flashcard"
-        submitLabel="Add flashcard"
+        title="Add a new Card"
+        submitLabel="Add Card"
         onSubmit={handleAddCard}
         cancelLabel="Cancel"
         resetOnSuccess
