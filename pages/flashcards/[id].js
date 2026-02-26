@@ -31,14 +31,19 @@ export default function FlashCardDetailPage() {
   }
 
   return (
-    <main>
-      <h1>Edit FlashCard</h1>
+    <>
+      <h1>Edit Card</h1>
       <FlashCardForm
         initialData={data}
         onSubmit={handleUpdate}
         submitLabel="Update Card"
         onCancel={() => router.push("/flashcards")}
       />
-    </main>
+    </>
   );
 }
+
+FlashCardDetailPage.meta = {
+  title: "Edit Card",
+  description: "Edit card details.",
+};

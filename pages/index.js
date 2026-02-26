@@ -5,13 +5,6 @@ import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
 import useSWR from "swr";
 
-const Title = styled.h1`
-  color: #000;
-  font-size: 1rem;
-  line-height: 1.2;
-  margin-bottom: 30px;
-`;
-
 export default function HomePage() {
   const { mutate } = useSWR("/api/flashcards");
   const {
@@ -57,8 +50,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Title>Homepage</Title>
-
       <FlashCardForm
         title="Add a new Card"
         submitLabel="Add Card"
@@ -70,3 +61,8 @@ export default function HomePage() {
     </>
   );
 }
+
+HomePage.meta = {
+  title: "Home",
+  description: "Dashboard and overview.",
+};

@@ -10,9 +10,14 @@ export default function FlashcardsPage() {
   if (isLoading) return <p>Loading data... Please wait...</p>;
 
   return (
-    <main>
-      <h1>FlashCard List</h1>
+    <>
+      <h1>Card List</h1>
       <FlashCardList flashcards={data} />
-    </main>
+    </>
   );
 }
+
+FlashcardsPage.meta = {
+  title: "Card List",
+  description: "A list of all your cards.",
+};

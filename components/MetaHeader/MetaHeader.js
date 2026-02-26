@@ -3,7 +3,7 @@
 import Head from "next/head";
 
 export default function MetaHeader({ title, description }) {
-  const pageTitle = title ? `${title} | FlipWise` : "FlipWise";
+  const pageTitle = title ? `FlipWise | ${title}` : "FlipWise";
   const pageDescription = description ?? "Learn with flashcards.";
 
   return (
