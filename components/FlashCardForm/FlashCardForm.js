@@ -50,7 +50,7 @@ export default function FlashCardForm({
   onCancel,
 }) {
   const { data: collections } = useSWR("/api/collections");
-  const { data: mutate } = useSWR("/api/flashcards");
+  const { mutate } = useSWR("/api/flashcards");
   const [collection, setCollection] = useState(initialData.collection ?? "");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
