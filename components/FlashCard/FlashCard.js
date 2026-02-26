@@ -8,7 +8,7 @@ import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 
 /* Styling */
 const CardFront = styled.article`
-  border: 3px solid var(--color-primary);
+  border: 3px solid ${(props) => props.$color || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
   background: #d1fcff;
@@ -19,7 +19,7 @@ const CardFront = styled.article`
 `;
 
 const CardBack = styled.article`
-  border: 3px solid var(--color-primary);
+  border: 3px solid ${(props) => props.$color || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
   background: #d1ffd3;
@@ -30,7 +30,7 @@ const CardBack = styled.article`
 `;
 
 const CardHeader = styled.div`
-  background: var(--color-primary);
+  background: ${(props) => props.$color || "var(--color-primary)"};
   padding: 5px 15px;
 `;
 
@@ -81,8 +81,8 @@ export default function FlashCard({ flashcard }) {
       isFlipped={isFlipped}
     >
       {/* FRONT */}
-      <CardFront onClick={flipCard}>
-        <CardHeader>
+      <CardFront $color={flashcard.color} onClick={flipCard}>
+        <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
         <CardBody>
@@ -93,8 +93,8 @@ export default function FlashCard({ flashcard }) {
       </CardFront>
 
       {/* BACK */}
-      <CardBack onClick={flipCard}>
-        <CardHeader>
+      <CardBack $color={flashcard.color} onClick={flipCard}>
+        <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
         </CardHeader>
         <CardBody>
