@@ -70,7 +70,7 @@ export default function Navbar() {
   return (
     <NavBar aria-label="Primary">
       <List>
-        <Item>
+        {/* <Item>
           <StyledLink
             href="/"
             aria-label="Go to startpage"
@@ -79,7 +79,7 @@ export default function Navbar() {
             <Icon icon={faHome} aria-hidden="true" />
             <LinkText>Home</LinkText>
           </StyledLink>
-        </Item>
+        </Item> */}
 
         <Item>
           <StyledLink
@@ -103,7 +103,7 @@ export default function Navbar() {
           </StyledLink>
         </Item>
 
-        <Item>
+        {/* <Item>
           <StyledLink
             href="/quiz"
             aria-label="Go to quiz page"
@@ -112,7 +112,7 @@ export default function Navbar() {
             <Icon icon={faPlay} aria-hidden="true" />
             <LinkText>Quiz</LinkText>
           </StyledLink>
-        </Item>
+        </Item> */}
       </List>
     </NavBar>
   );
