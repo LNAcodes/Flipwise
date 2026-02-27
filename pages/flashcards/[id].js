@@ -2,7 +2,12 @@
 
 import useSWR from "swr";
 import { useRouter } from "next/router";
+import styled from "styled-components";
 import FlashCardForm from "@/components/FlashCardForm/FlashCardForm";
+
+const PageTitle = styled.h1`
+  padding: 0;
+`;
 
 export default function FlashCardDetailPage() {
   const router = useRouter();
@@ -31,14 +36,19 @@ export default function FlashCardDetailPage() {
   }
 
   return (
-    <main>
-      <h1>Edit FlashCard</h1>
+    <>
+      <PageTitle>Edit Card</PageTitle>
       <FlashCardForm
         initialData={data}
         onSubmit={handleUpdate}
         submitLabel="Update Card"
         onCancel={() => router.push("/flashcards")}
       />
-    </main>
+    </>
   );
 }
+
+FlashCardDetailPage.meta = {
+  title: "Edit Card",
+  description: "Edit card details.",
+};
