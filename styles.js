@@ -39,7 +39,7 @@ export default createGlobalStyle`
 
 main {
   max-width: 1100px;
-  margin: 0 auto;
+  margin: 0 30px;
   padding: 0 30px; 
 }
 
