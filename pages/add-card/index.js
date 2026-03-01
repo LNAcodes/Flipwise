@@ -11,7 +11,10 @@ const PageTitle = styled.h1`
 
 export default function AddCardPage() {
   const { mutate } = useSWR("/api/flashcards");
-  const {
+
+  /* const { data, error, isLoading }; */
+
+  /* const {
     data: flashcards,
     error: cardsError,
     isLoading: cardsLoading,
@@ -33,7 +36,7 @@ export default function AddCardPage() {
       ...card,
       color: matchingCollection ? matchingCollection.color : "#defaultColor#",
     };
-  });
+  }); */
 
   async function handleAddCard(flashcards) {
     const newFlashcard = { ...flashcards, _id: crypto.randomUUID() };
@@ -62,7 +65,7 @@ export default function AddCardPage() {
         cancelLabel="Cancel"
         resetOnSuccess
       />
-      <FlashCardList flashcards={enrichedFlashcards} />
+      <FlashCardList /* flashcards={data} */ />
     </>
   );
 }
