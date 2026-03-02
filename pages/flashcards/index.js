@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
+
 import styled from "styled-components";
 
 const PageTitle = styled.h1`
@@ -9,15 +10,33 @@ const PageTitle = styled.h1`
 `;
 
 export default function FlashcardsPage() {
-  const { data, error, isLoading } = useSWR("/api/flashcards");
+  const {
+    data: flashcards,
+    error: cardsError,
+    isLoading: cardsLoading,
+  } = useSWR("/api/flashcards");
+  const {
+    data: collections,
+    error: collectionsError,
+    isLoading: colectionsLoading,
+  } = useSWR("/api/collections");
 
-  if (error) return <p>Error loading</p>;
-  if (isLoading) return <p>Loading data... Please wait...</p>;
-
+  if (cardsError || collectionsError) return <p>Error loading</p>;
+  if (cardsLoading || colectionsLoading)
+    return <p>Loading data... Please wait...</p>;
+  const enrichedFlashcards = flashcards.map((card) => {
+    const matchingCollection = collections.find(
+      (col) => col.name === card.collection
+    );
+    return {
+      ...card,
+      color: matchingCollection ? matchingCollection.color : "#defaultColor#",
+    };
+  });
   return (
     <>
       <PageTitle>Card List</PageTitle>
-      <FlashCardList flashcards={data} />
+      <FlashCardList flashcards={enrichedFlashcards} />
     </>
   );
 }
