@@ -34,15 +34,15 @@ const StyledLink = styled(Link)`
   width: 100%;
   padding: 10px;
   text-align: center;
-  color: var(--color-primary);
+  color: var(--nav-inactive);
   text-decoration: none;
   min-height: 44px;
 
   &:hover {
-    color: #313131;
+    color: var(--nav-active);
   }
   &[aria-current="page"] {
-    color: #1bb210;
+    color: var(--nav-active);
   }
 `;
 const Icon = styled(FontAwesomeIcon)`

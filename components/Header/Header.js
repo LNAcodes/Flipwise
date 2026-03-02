@@ -11,7 +11,13 @@ const StyledHeader = styled.header`
   display: flex;
   justify-content: center;
   padding: 16px 24px;
-  background-color: var(--bg-color-light);
+  background: var(--background-dark);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 20, 100, 1) 0%,
+    rgba(0, 20, 100, 0.3) 100%
+  );
+  backdrop-filter: blur(5px);
 `;
 
 const Logo = styled(Link)`

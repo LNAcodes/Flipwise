@@ -4,12 +4,14 @@ import { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
 :root {
-    --color-primary: #287895;
-    --color-accent: #33ff00;
+    --color-primary: #3366ff;
+    --color-secundary: #728994;
+    --color-accent: #00ff00;
+    --nav-active: #ffffff;
+    --nav-inactive: #ccc;
     --text-color-dark: #000000;
     --text-color-light: #ffffff;
-    --bg-color-light: #ffffff;
-    --bg-color-dark: #222222;
+    --background-dark: #01136B; 
     --color-biology: #8B9467;
     --color-chemistry: #FFC107;
     --color-geography: #34A85A;
@@ -27,14 +29,15 @@ export default createGlobalStyle`
     box-sizing: border-box;
   }
 
-  body {
+body {
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    background-color: var(--bg-color-light);
+    background: var(--background-dark);
+    background: linear-gradient(180deg, rgba(0, 20, 100, 1) 0%, rgb(0, 0, 50) 100%);
 }
 
 main {
