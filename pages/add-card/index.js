@@ -12,32 +12,6 @@ const PageTitle = styled.h1`
 export default function AddCardPage() {
   const { mutate } = useSWR("/api/flashcards");
 
-  /* const { data, error, isLoading }; */
-
-  /* const {
-    data: flashcards,
-    error: cardsError,
-    isLoading: cardsLoading,
-  } = useSWR("/api/flashcards");
-  const {
-    data: collections,
-    error: collectionsError,
-    isLoading: colectionsLoading,
-  } = useSWR("/api/collections");
-
-  if (cardsError || collectionsError) return <p>Error loading</p>;
-  if (cardsLoading || colectionsLoading)
-    return <p>Loading data... Please wait...</p>;
-  const enrichedFlashcards = flashcards.map((card) => {
-    const matchingCollection = collections.find(
-      (col) => col.name === card.collection
-    );
-    return {
-      ...card,
-      color: matchingCollection ? matchingCollection.color : "#defaultColor#",
-    };
-  }); */
-
   async function handleAddCard(flashcards) {
     const newFlashcard = { ...flashcards, _id: crypto.randomUUID() };
     mutate((prev) => [newFlashcard, ...prev], false);
@@ -65,7 +39,6 @@ export default function AddCardPage() {
         cancelLabel="Cancel"
         resetOnSuccess
       />
-      <FlashCardList /* flashcards={data} */ />
     </>
   );
 }
