@@ -1,5 +1,4 @@
 /* styles.js  */
-
 import { createGlobalStyle } from "styled-components";
 
 export default createGlobalStyle`
@@ -21,6 +20,11 @@ export default createGlobalStyle`
     --color-art: #8F8E94;
     --color-music: #FF69B4;
     --gap: 20px;
+    --font-family: "Poppins", sans-serif;
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
   }
 
   *,
@@ -29,8 +33,11 @@ export default createGlobalStyle`
     box-sizing: border-box;
   }
 
+
 body {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-light);
+    font-style: normal;
     margin: 0;
     min-height: 100vh;
     display: flex;
@@ -47,6 +54,7 @@ main {
 }
 
 h1, h2 {
+    font-weight: var(--font-weight-light);
     margin-bottom: 20px;
 }
 h2 {
@@ -54,7 +62,5 @@ h2 {
     font-size: 18px;
 }
 h1 {
-    font-family: Lucida, sans-serif;
-    font-weight: 300;
-    color: var(--color-primary);
+    color: var(--text-color-light);
 }`;
