@@ -9,13 +9,23 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
-/* Styling */
+/* hexcolor in rgb color umwandeln */
+const hexToRgba = (hex, alpha = 0.7) => {
+  const rgb = hex.replace("#", "");
+  const red = parseInt(rgb.slice(0, 2), 16);
+  const green = parseInt(rgb.slice(2, 4), 16);
+  const blue = parseInt(rgb.slice(4, 6), 16);
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+};
+
 const CardFront = styled.article`
-  border: 3px solid ${(props) => props.$color || "var(--color-primary)"};
+  background: ${(props) =>
+    hexToRgba(props.$color, 0.5) || "var(--color-primary)"};
+  /* border: 3px solid ${(props) => props.$color || "var(--color-primary)"}; */
   border-radius: 12px;
   overflow: hidden;
-  background: #d1fcff;
   margin-top: 10px;
+  padding: 0 10px 0 10px;
 
   &:hover {
     cursor: pointer;
@@ -23,11 +33,12 @@ const CardFront = styled.article`
 `;
 
 const CardBack = styled.article`
-  border: 3px solid ${(props) => props.$color || "var(--color-primary)"};
+  background: ${(props) =>
+    hexToRgba(props.$color, 0.5) || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
-  background: #d1ffd3;
   margin-top: 10px;
+  padding: 0 10px 0 10px;
 
   &:hover {
     cursor: pointer;
@@ -38,8 +49,7 @@ const CardHeader = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: ${(props) => props.$color || "var(--color-primary)"};
-  padding: 5px 0 5px 10px;
+  padding: 5px 0 0 5px;
 `;
 
 const CollectionTitle = styled.h2`
@@ -49,31 +59,33 @@ const CollectionTitle = styled.h2`
 `;
 
 const CardBody = styled.div`
-  padding: 10px;
-  min-height: 120px;
+  padding: 5px 12px 12px 12px;
+  min-height: 150px;
+  background: rgb(255, 255, 255, 0.7);
+  border-radius: 12px;
+  text-align: left;
 `;
 
 const Question = styled.h3`
-  color: #000;
-  font-size: 1rem;
+  display: inline;
+  font-size: 1.3rem;
   line-height: 1.2;
 `;
 
 const Answer = styled.h3`
-  color: var(--text-color-dark);
   font-size: 1rem;
   line-height: 1.2;
 `;
 
 const Label = styled.p`
   color: var(--text-color-dark);
-  font-size: 0.7rem;
-  line-height: 0;
+  font-size: 1rem;
+  line-height: 1;
 `;
 
 const StyledLink = styled(Link)`
   gap: 6px;
-  padding: 10px;
+  padding: 10px 5px 10px 10px;
   text-align: center;
   color: #fff;
   text-decoration: none;
@@ -85,8 +97,8 @@ const StyledLink = styled(Link)`
 `;
 
 const Icon = styled(FontAwesomeIcon)`
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   max-width: none;
   flex: 0 0 auto;
 `;

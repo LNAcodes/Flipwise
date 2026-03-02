@@ -8,6 +8,7 @@ const Form = styled.form`
   display: flex;
   flex-direction: column;
   justify-content: center;
+  min-height: 570px;
   padding-bottom: 40px;
 `;
 
