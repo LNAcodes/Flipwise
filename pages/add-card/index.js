@@ -1,7 +1,6 @@
 // pages/add-card/index.js
 
 import FlashCardForm from "@/components/FlashCardForm/FlashCardForm";
-import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
 import useSWR from "swr";
 
