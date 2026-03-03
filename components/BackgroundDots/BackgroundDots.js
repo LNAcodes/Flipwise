@@ -7,6 +7,7 @@ const Layer = styled.div`
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
+  opacity: 0.7;
 `;
 
 const DotOne = styled.div`

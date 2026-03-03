@@ -48,8 +48,8 @@ body {
 }
 
 main {
-  max-width: 1100px;
-  //margin: 0 auto;
+  max-width: 500px;
+  margin: 0 auto;
   padding: 0 30px; 
   z-index: 1;
 }

@@ -32,6 +32,9 @@ const Input = styled.input`
   &:focus::placeholder {
     opacity: 0;
   }
+  &:focus-visible {
+    outline: none;
+  }
   &:user-invalid {
     outline: 2px solid red;
   }
@@ -61,7 +64,9 @@ const Select = styled.select`
     background-color: rgba(0, 20, 100, 0.5);
     padding: 15px;
   }
-
+  &:focus-visible {
+    outline: none;
+  }
   &:user-invalid {
     outline: 2px solid red;
   }
