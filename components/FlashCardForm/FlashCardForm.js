@@ -10,7 +10,6 @@ const Form = styled.form`
   flex-direction: column;
   justify-content: left;
 `;
-
 const Label = styled.label`
   font-size: 1rem;
   line-height: 1.2;
@@ -22,7 +21,7 @@ const Input = styled.input`
   border-radius: 30px;
   border: 1px solid var(--color-border);
   color: var(--text-color-light);
-  font-size: 1.2rem;
+  font-size: 1rem;
   height: 60px;
   padding: 15px;
   &::placeholder {
@@ -39,13 +38,12 @@ const Input = styled.input`
     outline: 2px solid red;
   }
 `;
-
 const Select = styled.select`
   background-color: rgba(0, 20, 100, 0.5);
   border-radius: 30px;
   border: 1px solid var(--color-border);
   color: var(--text-color-light);
-  font-size: 1.2rem;
+  font-size: 1rem;
   height: 60px;
   padding: 15px;
   margin-bottom: 30px;
@@ -71,7 +69,6 @@ const Select = styled.select`
     outline: 2px solid red;
   }
 `;
-
 const Button = styled.button`
   background-color: var(--color-primary);
   border: none;
@@ -86,7 +83,6 @@ const Button = styled.button`
     background-color: var(--color-secundary);
   }
 `;
-
 const Hint = styled.p`
   color: var(--color-accent);
   font-size: 0.8rem;
@@ -99,7 +95,6 @@ const Hint = styled.p`
   pointer-events: none;
   transition: opacity 120ms ease;
 `;
-
 const Field = styled.div`
   display: flex;
   flex-direction: column;
@@ -111,7 +106,6 @@ const Field = styled.div`
     opacity: 1;
   }
 `;
-
 const SuccessMessage = styled.p`
   background: rgba(0, 200, 120, 0.5);
   border: 1px solid var(--color-border);
@@ -136,14 +130,6 @@ export default function FlashCardForm({
   const [showSuccess, setShowSuccess] = useState(false);
   const successTimerRef = useRef(null);
 
-  useEffect(() => {
-    return () => {
-      const timerId = successTimerRef.current; // get saved Timer-ID
-      if (!timerId) return; // wenn kein Timer, nix machen
-      clearTimeout(timerId); // Timer stoppen
-    };
-  }, []);
-
   async function handleSubmit(event) {
     event.preventDefault();
     setIsSubmitting(true);
@@ -157,8 +143,8 @@ export default function FlashCardForm({
       setShowSuccess(true); // Erfolgsmeldung sofort einblenden
       // Timer stoppen falls noch einer läuft
       if (successTimerRef.current) clearTimeout(successTimerRef.current);
-      // Neuen Timer starten und Timer-ID in successTimerRef,
-      successTimerRef.current = setTimeout(() => setShowSuccess(false), 3000); // nach 3 Sek. Erfolgsmeldung ausblenden
+      // Neuen Timer starten und Timer-ID in successTimerRef speichern,
+      successTimerRef.current = setTimeout(() => setShowSuccess(false), 3000); // nach 3 Sek.  ausblenden
 
       setSubmitError("");
 
