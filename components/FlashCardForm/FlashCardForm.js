@@ -138,7 +138,9 @@ export default function FlashCardForm({
 
   useEffect(() => {
     return () => {
-      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+      const timerId = successTimerRef.current; // get saved Timer-ID
+      if (!timerId) return; // wenn kein Timer, nix machen
+      clearTimeout(timerId); // Timer stoppen
     };
   }, []);
 
@@ -152,9 +154,11 @@ export default function FlashCardForm({
     try {
       await onSubmit(data);
 
-      setShowSuccess(true);
+      setShowSuccess(true); // Erfolgsmeldung sofort einblenden
+      // Timer stoppen falls noch einer läuft
       if (successTimerRef.current) clearTimeout(successTimerRef.current);
-      successTimerRef.current = setTimeout(() => setShowSuccess(false), 3000);
+      // Neuen Timer starten und Timer-ID in successTimerRef,
+      successTimerRef.current = setTimeout(() => setShowSuccess(false), 3000); // nach 3 Sek. Erfolgsmeldung ausblenden
 
       setSubmitError("");
 
