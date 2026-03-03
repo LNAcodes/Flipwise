@@ -10,7 +10,7 @@ export default createGlobalStyle`
     --nav-inactive: #ccc;
     --text-color-dark: #000000;
     --text-color-light: #ffffff;
-    --background-dark: #01136B; 
+    --background-dark: rgb(1, 19, 107); 
     --color-biology: #8B9467;
     --color-chemistry: #FFC107;
     --color-geography: #34A85A;
@@ -48,8 +48,9 @@ body {
 
 main {
   max-width: 1100px;
-  margin: 0 auto;
+  //margin: 0 auto;
   padding: 0 30px; 
+  z-index: 1;
 }
 h1 {
     font-size: 24px;
