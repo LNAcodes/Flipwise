@@ -3,8 +3,8 @@
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
+import { loadBookmarks, toggleBookmark } from "@/utils/bookmarkHelpers";
 const PageTitle = styled.h1`
   padding: 0;
 `;
@@ -22,8 +22,13 @@ export default function FlashcardsPage() {
   } = useSWR("/api/collections");
 
   const [bookmarkIds, setBookmarkIds] = useState([]);
+  useEffect(() => {
+    const initialBookmarks = loadBookmarks();
+    setBookmarkIds(initialBookmarks);
+  }, []);
   function handleToggleBookmark(id) {
-    console.log("Geklickt auf ID:", id);
+    const updateBookmarks = toggleBookmark(id);
+    setBookmarkIds(updateBookmarks);
   }
   if (cardsError || collectionsError) return <p>Error loading</p>;
   if (cardsLoading || colectionsLoading)
@@ -40,7 +45,11 @@ export default function FlashcardsPage() {
   return (
     <>
       <PageTitle>Card List</PageTitle>
-      <FlashCardList flashcards={enrichedFlashcards} />
+      <FlashCardList
+        flashcards={enrichedFlashcards}
+        bookmarkIds={bookmarkIds}
+        onToggleBookmark={handleToggleBookmark}
+      />
     </>
   );
 }
