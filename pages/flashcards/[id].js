@@ -8,6 +8,14 @@ import FlashCardForm from "@/components/FlashCardForm/FlashCardForm";
 const PageTitle = styled.h1`
   padding: 0;
 `;
+const FeedbackMessage = styled.p`
+  background: rgba(0, 200, 120, 0.5);
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  padding: 10px 14px;
+  border-radius: 16px;
+  margin: 10px 0 6px;
+`;
 
 export default function FlashCardDetailPage() {
   const router = useRouter();
@@ -17,9 +25,34 @@ export default function FlashCardDetailPage() {
   const flashcardUrl = id ? `/api/flashcards/${id}` : null;
   const { data, error, isLoading } = useSWR(flashcardUrl);
 
-  if (error) return <p>Error loading</p>;
-  if (isLoading || !id) return <p>Loading data... Please wait...</p>;
-  if (!data) return <h1>FlashCard not found</h1>;
+  if (error) {
+    return (
+      <>
+        <PageTitle>Edit Card</PageTitle>
+        <FeedbackMessage role="alert">Error loading flashcard.</FeedbackMessage>
+      </>
+    );
+  }
+  if (isLoading || !id) {
+    return (
+      <>
+        <PageTitle>Edit Card</PageTitle>
+        <FeedbackMessage role="status" aria-live="polite">
+          Loading data... Please wait...
+        </FeedbackMessage>
+      </>
+    );
+  }
+  if (!data) {
+    return (
+      <>
+        <PageTitle>Edit Card</PageTitle>
+        <FeedbackMessage role="status" aria-live="polite">
+          FlashCard not found.
+        </FeedbackMessage>
+      </>
+    );
+  }
 
   async function handleUpdate(updatedData) {
     const result = await fetch(`/api/flashcards/${id}`, {
@@ -38,6 +71,7 @@ export default function FlashCardDetailPage() {
   return (
     <>
       <PageTitle>Edit Card</PageTitle>
+
       <FlashCardForm
         initialData={data}
         onSubmit={handleUpdate}
