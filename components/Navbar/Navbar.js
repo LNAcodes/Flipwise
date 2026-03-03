@@ -8,6 +8,7 @@ import {
   faPlusCircle,
   faPlay,
   faBookmark,
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 
 const NavBar = styled.nav`
@@ -109,7 +110,7 @@ export default function Navbar() {
             aria-label="Go to add card page"
             aria-current={isActive("/bookmarks") ? "page" : undefined}
           >
-            <Icon icon={faBookmark} aria-hidden="true" />
+            <Icon icon={faEye} aria-hidden="true" />
             <LinkText>Bookmarks</LinkText>
           </StyledLink>
         </Item>

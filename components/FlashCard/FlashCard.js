@@ -38,7 +38,7 @@ const CardBack = styled.article`
 const CardHeader = styled.div`
   display: flex;
 
-  justify-content: left;
+  justify-content: space-between;
   background: ${(props) => props.$color || "var(--color-primary)"};
   padding: 5px 0 5px 10px;
 `;
