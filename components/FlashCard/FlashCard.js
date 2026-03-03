@@ -11,16 +11,22 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 /* hexcolor in rgb color umwandeln */
 const hexToRgba = (hex, alpha = 0.7) => {
-  const rgb = hex.replace("#", "");
-  const red = parseInt(rgb.slice(0, 2), 16);
-  const green = parseInt(rgb.slice(2, 4), 16);
-  const blue = parseInt(rgb.slice(4, 6), 16);
+  const hexString = hex.replace("#", ""); // entferne '#'
+
+  const redHex = hexString.slice(0, 2); // extract 1, 2
+  const greenHex = hexString.slice(2, 4); // extract 3, 4
+  const blueHex = hexString.slice(4, 6); // extract 5, 6
+
+  const red = parseInt(redHex, 16); // Hex String als Zahl interpretiere diesen String als Zahl im Zahlensystem 16 (Hexadezimal).
+  const green = parseInt(greenHex, 16);
+  const blue = parseInt(blueHex, 16);
+
   return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
 };
 
 const CardFront = styled.article`
   background: ${(props) =>
-    hexToRgba(props.$color, 0.7) || "var(--color-primary)"};
+    hexToRgba(props.$color, 0.8) || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
   margin-top: 10px;

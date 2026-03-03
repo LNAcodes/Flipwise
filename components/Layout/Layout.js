@@ -3,11 +3,13 @@ import styled from "styled-components";
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import MetaHeader from "@/components/MetaHeader/MetaHeader";
+import BackgroundDots from "@/components/BackgroundDots/BackgroundDots";
 
 const Wrapper = styled.div`
-  display: flex;
   min-height: 100vh;
+  display: flex;
   flex-direction: column;
+  position: relative;
 `;
 
 const Main = styled.main`
@@ -19,6 +21,7 @@ export default function Layout({ children, title, description }) {
   return (
     <Wrapper>
       <MetaHeader title={title} description={description} />
+      <BackgroundDots />
       <Header />
       <Main>{children}</Main>
       <Footer />
