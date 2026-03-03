@@ -95,24 +95,28 @@ const Icon = styled(FontAwesomeIcon)`
   flex: 0 0 auto;
 `;
 
-export default function FlashCard({ flashcard }) {
+export default function FlashCard({ flashcard, onDelete }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const { showHint, markFirstFlip } = useFlipHint();
   const id = flashcard._id;
-  const { mutate } = useSWR(`/api/flashcards/`);
+  const { mutate } = useSWR("/api/flashcards");
 
   const [confirm, setConfirm] = useState(false);
 
   function flipCard() {
+    if (confirm) return;
     markFirstFlip();
     setIsFlipped((prev) => !prev);
   }
   const handleDelete = async () => {
+    event.stopPropagation();
     const response = await fetch(`/api/flashcards/${id}`, {
       method: "DELETE",
     });
     if (response.ok) {
-      mutate();
+      onDelete("success");
+    } else {
+      onDelete("error");
     }
   };
 
@@ -127,7 +131,13 @@ export default function FlashCard({ flashcard }) {
       <CardFront $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <Button onClick={() => setConfirm(!confirm)}>
+          <Button
+            onClick={(event) => {
+              event.stopPropagation();
+              console.log("trash1 clicked, confirm state:", confirm);
+              setConfirm(!confirm);
+            }}
+          >
             <Icon icon={faTrash} aria-hidden="true" />
           </Button>
           {confirm && (
@@ -135,7 +145,10 @@ export default function FlashCard({ flashcard }) {
               <Label>Are you sure?</Label>
               <Button
                 onClick={(event) => {
-                  (event.stopPropagation(), setConfirm(!confirm));
+                  event.stopPropagation();
+                  setConfirm(false);
+                  setSuccessMessage(true);
+                  console.log("finally deleted");
                 }}
               >
                 Cancel
