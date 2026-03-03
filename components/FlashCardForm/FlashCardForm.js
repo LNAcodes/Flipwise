@@ -2,7 +2,7 @@
 
 import styled from "styled-components";
 import useSWR from "swr";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const Form = styled.form`
   color: var(--text-color-light);
@@ -16,7 +16,6 @@ const Label = styled.label`
   line-height: 1.2;
   padding: 5px;
   text-align: left;
-  margin-top: 5px;
 `;
 const Input = styled.input`
   background-color: rgba(0, 20, 100, 0.5);
@@ -46,6 +45,7 @@ const Select = styled.select`
   font-size: 1.2rem;
   height: 60px;
   padding: 15px;
+  margin-bottom: 30px;
   padding-right: 40px;
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -87,9 +87,9 @@ const Hint = styled.p`
   font-size: 0.8rem;
   line-height: 1;
   padding: 5px;
-  margin: 7px 0 0 10px;
+  margin: 7px 0 0 0;
   text-align: left;
-  min-height: 12px;
+  min-height: 10px;
   opacity: 0;
   pointer-events: none;
   transition: opacity 120ms ease;
@@ -98,12 +98,22 @@ const Hint = styled.p`
 const Field = styled.div`
   display: flex;
   flex-direction: column;
+  margin: 0;
   input:focus + ${Hint} {
     opacity: 1;
   }
   select:focus:invalid + ${Hint} {
     opacity: 1;
   }
+`;
+
+const SuccessMessage = styled.p`
+  background: rgba(0, 200, 120, 0.5);
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  padding: 10px 14px;
+  border-radius: 16px;
+  margin: 10px 0 6px;
 `;
 
 export default function FlashCardForm({
@@ -117,6 +127,15 @@ export default function FlashCardForm({
   const { data: collections } = useSWR("/api/collections");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [collectionFocused, setCollectionFocused] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
+  const successTimerRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+    };
+  }, []);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -128,8 +147,13 @@ export default function FlashCardForm({
     try {
       await onSubmit(data);
 
+      setShowSuccess(true);
+      if (successTimerRef.current) clearTimeout(successTimerRef.current);
+      successTimerRef.current = setTimeout(() => setShowSuccess(false), 3000);
+
+      setSubmitError("");
+
       if (resetOnSuccess) {
-        // mutate();
         event.target.reset();
       }
     } catch (error) {
@@ -141,6 +165,11 @@ export default function FlashCardForm({
 
   return (
     <Form data-js="flashCardForm" onSubmit={handleSubmit}>
+      {showSuccess ? (
+        <SuccessMessage role="status" aria-live="polite">
+          Flashcard successfully added.
+        </SuccessMessage>
+      ) : null}
       <Field>
         <Label htmlFor="question">Question</Label>
         <Input
@@ -195,8 +224,6 @@ export default function FlashCardForm({
           ))}
         </Select>
       </Field>
-
-      <Hint>Please select a collection.</Hint>
 
       <Button type="submit" disabled={isSubmitting}>
         {submitLabel}
