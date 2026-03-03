@@ -1,3 +1,5 @@
+// components\Navbar\Navbar.js
+
 import Link from "next/link";
 import styled from "styled-components";
 import { useRouter } from "next/router";

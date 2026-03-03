@@ -42,7 +42,6 @@ body {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     background: var(--background-dark);
     background: linear-gradient(180deg, rgba(0, 20, 100, 1) 0%, rgb(0, 0, 50) 100%);
 }
@@ -52,7 +51,10 @@ main {
   margin: 0 auto;
   padding: 0 30px; 
 }
-
+h1 {
+    font-size: 24px;
+    color: var(--text-color-light);
+}
 h1, h2 {
     font-weight: var(--font-weight-light);
     margin-bottom: 20px;
@@ -61,6 +63,4 @@ h2 {
     color: var(--text-color-dark);
     font-size: 18px;
 }
-h1 {
-    color: var(--text-color-light);
-}`;
+`;

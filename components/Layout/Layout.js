@@ -5,6 +5,7 @@ import Footer from "@/components/Footer/Footer";
 import MetaHeader from "@/components/MetaHeader/MetaHeader";
 
 const Wrapper = styled.div`
+  display: flex;
   min-height: 100vh;
   flex-direction: column;
 `;

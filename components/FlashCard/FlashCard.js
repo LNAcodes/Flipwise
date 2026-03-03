@@ -20,8 +20,7 @@ const hexToRgba = (hex, alpha = 0.7) => {
 
 const CardFront = styled.article`
   background: ${(props) =>
-    hexToRgba(props.$color, 0.5) || "var(--color-primary)"};
-  /* border: 3px solid ${(props) => props.$color || "var(--color-primary)"}; */
+    hexToRgba(props.$color, 0.7) || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
   margin-top: 10px;
@@ -60,20 +59,23 @@ const CollectionTitle = styled.h2`
 
 const CardBody = styled.div`
   padding: 5px 12px 12px 12px;
-  min-height: 150px;
+  min-height: 200px;
   background: rgb(255, 255, 255, 0.7);
   border-radius: 12px;
   text-align: left;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 const Question = styled.h3`
   display: inline;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   line-height: 1.2;
 `;
 
 const Answer = styled.h3`
-  font-size: 1rem;
+  display: inline;
+  font-size: 1.2rem;
   line-height: 1.2;
 `;
 
