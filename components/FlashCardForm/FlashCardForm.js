@@ -19,9 +19,9 @@ const Label = styled.label`
   margin-top: 5px;
 `;
 const Input = styled.input`
-  background-color: rgba(0, 20, 100, 0.7);
+  background-color: rgba(0, 20, 100, 0.5);
   border-radius: 30px;
-  border: 1px solid #fff;
+  border: 1px solid var(--color-border);
   color: var(--text-color-light);
   font-size: 1.2rem;
   height: 60px;
@@ -39,9 +39,9 @@ const Input = styled.input`
 `;
 
 const Select = styled.select`
-  background-color: rgba(0, 20, 100, 0.7);
+  background-color: rgba(0, 20, 100, 0.5);
   border-radius: 30px;
-  border: 1px solid #fff;
+  border: 1px solid var(--color-border);
   color: var(--text-color-light);
   font-size: 1.2rem;
   height: 60px;
@@ -58,7 +58,7 @@ const Select = styled.select`
     color: var(--text-color-light);
   }
   &#collection {
-    background-color: rgba(0, 20, 100, 0.7);
+    background-color: rgba(0, 20, 100, 0.5);
     padding: 15px;
   }
 
