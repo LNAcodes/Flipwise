@@ -1,27 +1,20 @@
-// pages\index.js
+// pages/index.js
 
-import FlashCardForm from "@/components/FlashCardForm/FlashCardForm";
-import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
-import useSWR from "swr";
 
-const Title = styled.h1`
-  color: #000;
-  font-size: 1rem;
-  line-height: 1.2;
-  margin-bottom: 30px;
+const PageTitle = styled.h1`
+  padding: 0;
 `;
 
 export default function HomePage() {
-  const { data, error, isLoading } = useSWR("/api/flashcards");
-  if (error) return <p>Error loading</p>;
-  if (isLoading) return <p>Loading data... Please wait...</p>;
-
   return (
-    <main>
-      <Title>Homepage</Title>
-      <FlashCardForm />
-      <FlashCardList flashcards={data} />
-    </main>
+    <>
+      <PageTitle>Home (Dashbord)</PageTitle>
+    </>
   );
 }
+
+HomePage.meta = {
+  title: "Home (Dashboard)",
+  description: "Dashboard and overview.",
+};
