@@ -2,13 +2,14 @@
 
 import styled from "styled-components";
 import useSWR from "swr";
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 
 const Form = styled.form`
   color: var(--text-color-light);
   display: flex;
   flex-direction: column;
   justify-content: left;
+  min-width: 300px;
 `;
 const Label = styled.label`
   font-size: 1rem;

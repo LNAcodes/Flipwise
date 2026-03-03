@@ -21,19 +21,18 @@ export default createGlobalStyle`
     --color-art: #8F8E94;
     --color-music: #FF69B4;
     --gap: 20px;
-    --font-family: "Poppins", sans-serif;
+    --font-family: var(--font-poppins, system-ui), sans-serif;
     --font-weight-light: 300;
     --font-weight-regular: 400;
     --font-weight-medium: 500;
     --font-weight-semibold: 600;
-  }
+}
 
-  *,
-  *::before,
-  *::after {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
-  }
-
+}
 
 body {
     font-family: var(--font-family);
@@ -41,28 +40,31 @@ body {
     font-style: normal;
     margin: 0;
     min-height: 100vh;
-    display: flex;
-    flex-direction: column;
     background: var(--background-dark);
     background: linear-gradient(180deg, rgba(0, 20, 100, 1) 0%, rgb(0, 0, 50) 100%);
 }
 
 main {
-  max-width: 500px;
+  width: auto;
   margin: 0 auto;
   padding: 0 30px; 
   z-index: 1;
 }
+
+h1, h2, h3, p, input, select, button, span, ul, li, a {
+    font-family: var(--font-family);
+}
+
 h1 {
-    font-size: 24px;
     color: var(--text-color-light);
-}
-h1, h2 {
+    font-size: 24px;
     font-weight: var(--font-weight-light);
-    margin-bottom: 20px;
 }
+
 h2 {
     color: var(--text-color-dark);
     font-size: 18px;
+    font-weight: var(--font-weight-light);
+    margin-bottom: 20px;
 }
 `;

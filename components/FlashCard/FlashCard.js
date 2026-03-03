@@ -60,6 +60,7 @@ const CardHeader = styled.div`
 
 const CollectionTitle = styled.h2`
   color: var(--text-color-light);
+  font-family: var(--font-family);
   font-size: 1rem;
   line-height: 1.2;
 `;
