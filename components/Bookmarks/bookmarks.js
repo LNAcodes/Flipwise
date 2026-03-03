@@ -9,9 +9,11 @@ const Button = styled.button`
   background: transparent;
   border: 0;
   padding: 0;
-  width: 25px;
-  height: 25px;
+  width: 30px;
+  height: 30px;
   font-size: 30px;
+  //Test here: marked = black, unmarked = white
+  color: ${({ $isBookmarked }) => ($isBookmarked ? "#000" : "#fff")};
 
   &:hover {
     transform: scale(1.2);
@@ -22,6 +24,7 @@ export default function BookmarkButton({ onToggleBookmark, isBookmarked, id }) {
   return (
     <Button
       type="button"
+      $isBookmarked={isBookmarked}
       onClick={(event) => {
         event.stopPropagation();
         onToggleBookmark(id);
