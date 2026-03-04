@@ -99,7 +99,6 @@ export default function FlashCard({ flashcard, onDelete }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const { showHint, markFirstFlip } = useFlipHint();
   const id = flashcard._id;
-  const { mutate } = useSWR("/api/flashcards");
 
   const [confirm, setConfirm] = useState(false);
 
@@ -108,7 +107,7 @@ export default function FlashCard({ flashcard, onDelete }) {
     markFirstFlip();
     setIsFlipped((prev) => !prev);
   }
-  const handleDelete = async () => {
+  const handleDelete = async (event) => {
     event.stopPropagation();
     const response = await fetch(`/api/flashcards/${id}`, {
       method: "DELETE",
@@ -134,7 +133,6 @@ export default function FlashCard({ flashcard, onDelete }) {
           <Button
             onClick={(event) => {
               event.stopPropagation();
-              console.log("trash1 clicked, confirm state:", confirm);
               setConfirm(!confirm);
             }}
           >
@@ -147,8 +145,6 @@ export default function FlashCard({ flashcard, onDelete }) {
                 onClick={(event) => {
                   event.stopPropagation();
                   setConfirm(false);
-                  setSuccessMessage(true);
-                  console.log("finally deleted");
                 }}
               >
                 Cancel
