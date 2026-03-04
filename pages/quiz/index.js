@@ -31,7 +31,13 @@ const FeedbackMessage = styled.p`
   border-radius: 20px;
   margin: 10px 0 6px;
 `;
+
+const Progress = styled.p`
+  color: var(--color-accent);
+`;
 export default function QuizPage() {
+  const [currentCard, setCurrentCard] = useState(0);
+
   const {
     data: flashcards,
     error: cardsError,
@@ -75,8 +81,11 @@ export default function QuizPage() {
   return (
     <>
       <PageTitle>Quiz</PageTitle>
-      <FlashCardList flashcards={[enrichedFlashcards[0]]} />
-      <Button>Next</Button>
+      <FlashCardList flashcards={[enrichedFlashcards[currentCard]]} />
+      <Button onClick={() => setCurrentCard((i) => i + 1)}>Next</Button>
+      <Progress>
+        {currentCard + 1}/{enrichedFlashcards.length}
+      </Progress>
     </>
   );
 }
