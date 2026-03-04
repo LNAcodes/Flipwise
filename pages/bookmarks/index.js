@@ -49,10 +49,7 @@ export default function FlashcardsPage() {
   const bookmarkedCards = enrichedFlashcards.filter((card) =>
     bookmarkIds.includes(card._id)
   );
-  /* let hasBookmarkes = false;
-  if (bookmarkedCards.length != 0) {
-    hasBookmarkes = true; 
-  }*/
+
   return (
     <>
       <PageTitle>Bookmark List</PageTitle>

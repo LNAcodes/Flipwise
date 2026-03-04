@@ -12,7 +12,7 @@ export function saveBookmarkIds(ids) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
 }
 
-// remove or delete
+// remove or add
 export function toggleBookmark(id) {
   const currentIds = loadBookmarks();
 
