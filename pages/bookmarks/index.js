@@ -8,15 +8,10 @@ import { loadBookmarks, toggleBookmark } from "@/utils/bookmarkHelpers";
 const PageTitle = styled.h1`
   padding: 0;
 `;
-const FeedbackMessage = styled.p`
-  background: rgba(0, 200, 120, 0.5);
-  border: 1px solid var(--color-border);
-  color: var(--color-accent);
-  padding: 10px 14px;
-  border-radius: 16px;
-  margin: 10px 0 6px;
+const Message = styled.h2`
+  color: #f10707;
+  font-size: 20px;
 `;
-
 export default function FlashcardsPage() {
   const {
     data: flashcards,
@@ -38,39 +33,34 @@ export default function FlashcardsPage() {
     const updateBookmarks = toggleBookmark(id);
     setBookmarkIds(updateBookmarks);
   }
-  if (cardsError || collectionsError) {
-    return (
-      <>
-        <PageTitle>Edit Card</PageTitle>
-        <FeedbackMessage role="alert">Error loading</FeedbackMessage>
-      </>
-    );
-  }
-  if (cardsLoading || colectionsLoading) {
-    return (
-      <>
-        <PageTitle>Edit Card</PageTitle>
-        <FeedbackMessage role="status" aria-live="polite">
-          Loading data... Please wait...
-        </FeedbackMessage>
-      </>
-    );
-  }
-
+  if (cardsError || collectionsError) return <p>Error loading</p>;
+  if (cardsLoading || colectionsLoading)
+    return <p>Loading data... Please wait...</p>;
   const enrichedFlashcards = flashcards.map((card) => {
     const matchingCollection = collections.find(
       (col) => col.name === card.collection
     );
+
     return {
       ...card,
       color: matchingCollection ? matchingCollection.color : "#defaultColor#",
     };
   });
+  const bookmarkedCards = enrichedFlashcards.filter((card) =>
+    bookmarkIds.includes(card._id)
+  );
+  /* let hasBookmarkes = false;
+  if (bookmarkedCards.length != 0) {
+    hasBookmarkes = true; 
+  }*/
   return (
     <>
-      <PageTitle>Card List</PageTitle>
+      <PageTitle>Bookmark List</PageTitle>
+      {bookmarkedCards.length === 0 && (
+        <Message aria-live="polite">There are no Bookmarks yet!</Message>
+      )}
       <FlashCardList
-        flashcards={enrichedFlashcards}
+        flashcards={bookmarkedCards}
         bookmarkIds={bookmarkIds}
         onToggleBookmark={handleToggleBookmark}
       />
@@ -79,6 +69,6 @@ export default function FlashcardsPage() {
 }
 
 FlashcardsPage.meta = {
-  title: "Card List",
-  description: "A list of all your cards.",
+  title: "Bookmark List",
+  description: "A list of all my bookmarked cards.",
 };
