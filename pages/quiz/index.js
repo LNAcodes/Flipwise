@@ -9,6 +9,20 @@ const PageTitle = styled.h1`
   padding: 0;
 `;
 
+const Button = styled.button`
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 60px;
+  padding: 5px 60px;
+  &:hover {
+    background-color: var(--color-secondary);
+  }
+`;
+
 const FeedbackMessage = styled.p`
   background: rgba(0, 200, 120, 0.5);
   border: 1px solid var(--color-border);
@@ -62,6 +76,7 @@ export default function QuizPage() {
     <>
       <PageTitle>Quiz</PageTitle>
       <FlashCardList flashcards={[enrichedFlashcards[0]]} />
+      <Button>Next</Button>
     </>
   );
 }
