@@ -4,10 +4,11 @@ import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
-import { loadBookmarks, toggleBookmark } from "@/utils/bookmarkHelpers";
+
 const PageTitle = styled.h1`
   padding: 0;
 `;
+
 const FeedbackMessage = styled.p`
   background: rgba(0, 200, 120, 0.5);
   border: 1px solid var(--color-border);
@@ -16,7 +17,7 @@ const FeedbackMessage = styled.p`
   border-radius: 20px;
   margin: 10px 0 6px;
 `;
-export default function FlashcardsPage() {
+export default function QuizPage() {
   const {
     data: flashcards,
     error: cardsError,
@@ -27,18 +28,6 @@ export default function FlashcardsPage() {
     error: collectionsError,
     isLoading: colectionsLoading,
   } = useSWR("/api/collections");
-
-  const [bookmarkIds, setBookmarkIds] = useState([]);
-
-  useEffect(() => {
-    const initialBookmarks = loadBookmarks();
-    setBookmarkIds(initialBookmarks);
-  }, []);
-
-  function handleToggleBookmark(id) {
-    const updateBookmarks = toggleBookmark(id);
-    setBookmarkIds(updateBookmarks);
-  }
 
   if (cardsError || collectionsError) {
     return (
@@ -71,17 +60,13 @@ export default function FlashcardsPage() {
   });
   return (
     <>
-      <PageTitle>Card List</PageTitle>
-      <FlashCardList
-        flashcards={enrichedFlashcards}
-        bookmarkIds={bookmarkIds}
-        onToggleBookmark={handleToggleBookmark}
-      />
+      <PageTitle>Quiz</PageTitle>
+      <FlashCardList flashcards={[enrichedFlashcards[0]]} />
     </>
   );
 }
 
-FlashcardsPage.meta = {
-  title: "Card List",
-  description: "A list of all your cards.",
+QuizPage.meta = {
+  title: "Quiz",
+  description: "Start quiz and learn cards.",
 };
