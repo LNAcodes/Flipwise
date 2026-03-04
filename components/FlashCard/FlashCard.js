@@ -1,6 +1,6 @@
 // components/FlashCard/FlashCard.js
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
 import { useFlipHint } from "@/hooks/useFlipHint";
@@ -117,6 +117,7 @@ export default function FlashCard({
   onToggleBookmark,
   isBookmarked,
   id,
+  onShowAnswer,
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const { showHint, markFirstFlip } = useFlipHint();
@@ -125,6 +126,12 @@ export default function FlashCard({
     markFirstFlip();
     setIsFlipped((prev) => !prev);
   }
+
+  useEffect(() => {
+    if (isFlipped) {
+      onShowAnswer?.();
+    }
+  }, [isFlipped, onShowAnswer]);
 
   return (
     <ReactCardFlip

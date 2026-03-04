@@ -38,6 +38,11 @@ const Feedback = styled.p`
 
 export default function QuizPage() {
   const [currentCard, setCurrentCard] = useState(0);
+  const [hasSeenAnswer, setHasSeenAnswer] = useState(false);
+
+  useEffect(() => {
+    setHasSeenAnswer(false); // bei neuer Karte Button wieder verstecken
+  }, [currentCard]);
 
   const amountOfCards = 10;
 
@@ -88,8 +93,6 @@ export default function QuizPage() {
     return copy.slice(0, amountOfCards);
   }
 
-  console.log(pickCards(enrichedFlashcards, amountOfCards));
-
   return (
     <>
       <PageTitle>Quiz</PageTitle>
@@ -98,15 +101,24 @@ export default function QuizPage() {
           <FeedbackMessage>
             {currentCard + 1}/{amountOfCards}
           </FeedbackMessage>
-          <FlashCardList flashcards={[enrichedFlashcards[currentCard]]} />
-          <Button onClick={() => setCurrentCard((i) => i + 1)}>
-            Next Card
-          </Button>
+          <FlashCardList
+            flashcards={[enrichedFlashcards[currentCard]]}
+            onShowAnswer={() => setHasSeenAnswer(true)}
+          />
+
+          {hasSeenAnswer && (
+            <Button onClick={() => setCurrentCard((i) => i + 1)}>
+              Next Card
+            </Button>
+          )}
         </>
       ) : (
-        <FeedbackMessage>
-          All {amountOfCards} cards have been viewed.
-        </FeedbackMessage>
+        <>
+          <FeedbackMessage>
+            All {amountOfCards} cards have been viewed.
+          </FeedbackMessage>
+          <Button onClick={() => setCurrentCard(0)}>Restart Quiz</Button>
+        </>
       )}
     </>
   );
