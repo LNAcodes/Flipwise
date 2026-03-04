@@ -28,6 +28,7 @@ const FeedbackMessage = styled.p`
   padding: 10px 14px;
   border-radius: 20px;
   margin: 10px 0 6px;
+  min-width: 300px;
 `;
 
 // ZUFÄLLIGE QUIZ CARDS ZUSAMMENSTELLEN

@@ -31,6 +31,7 @@ const CardFront = styled.article`
   overflow: hidden;
   margin-top: 10px;
   padding: 0 10px 0 10px;
+  min-width: 300px;
 
   &:hover {
     cursor: pointer;
@@ -44,6 +45,7 @@ const CardBack = styled.article`
   overflow: hidden;
   margin-top: 10px;
   padding: 0 10px 0 10px;
+  min-width: 300px;
 
   &:hover {
     cursor: pointer;
