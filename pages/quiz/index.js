@@ -8,7 +8,6 @@ import { useEffect, useState } from "react";
 const PageTitle = styled.h1`
   padding: 0;
 `;
-
 const Button = styled.button`
   background-color: var(--color-primary);
   border: none;
@@ -22,7 +21,6 @@ const Button = styled.button`
     background-color: var(--color-secondary);
   }
 `;
-
 const FeedbackMessage = styled.p`
   background: rgba(0, 200, 120, 0.5);
   border: 1px solid var(--color-border);
@@ -32,17 +30,17 @@ const FeedbackMessage = styled.p`
   margin: 10px 0 6px;
 `;
 
-const Feedback = styled.p`
-  color: var(--color-accent);
-`;
+// ZUFÄLLIGE QUIZ CARDS ZUSAMMENSTELLEN
+function pickRandomCards(cards, amountOfCards) {
+  const copy = [...cards];
+  copy.sort(() => Math.random() - 0.5);
+  return copy.slice(0, Math.min(amountOfCards, copy.length));
+}
 
 export default function QuizPage() {
+  const [quizCards, setQuizCards] = useState([]);
   const [currentCard, setCurrentCard] = useState(0);
   const [hasSeenAnswer, setHasSeenAnswer] = useState(false);
-
-  useEffect(() => {
-    setHasSeenAnswer(false); // bei neuer Karte Button wieder verstecken
-  }, [currentCard]);
 
   const amountOfCards = 10;
 
@@ -57,26 +55,6 @@ export default function QuizPage() {
     isLoading: colectionsLoading,
   } = useSWR("/api/collections");
 
-  if (cardsError || collectionsError) {
-    return (
-      <>
-        <PageTitle>Edit Card</PageTitle>
-        <FeedbackMessage role="alert">Error loading</FeedbackMessage>
-      </>
-    );
-  }
-
-  if (cardsLoading || colectionsLoading) {
-    return (
-      <>
-        <PageTitle>Edit Card</PageTitle>
-        <FeedbackMessage role="status" aria-live="polite">
-          Loading data... Please wait...
-        </FeedbackMessage>
-      </>
-    );
-  }
-
   const enrichedFlashcards = flashcards.map((card) => {
     const matchingCollection = collections.find(
       (col) => col.name === card.collection
@@ -87,22 +65,57 @@ export default function QuizPage() {
     };
   });
 
-  // 10 QUIZ CARDS ZUSAMMENSTELLEN
-  function pickCards(cards, amountOfCards) {
-    const copy = [...cards];
-    return copy.slice(0, amountOfCards);
+  useEffect(() => {
+    if (!enrichedFlashcards.length) return;
+    if (quizCards.length > 0) return;
+
+    setQuizCards(pickRandomCards(enrichedFlashcards, amountOfCards));
+    setCurrentCard(0);
+  }, [enrichedFlashcards, amountOfCards, quizCards.length]);
+
+  useEffect(() => {
+    setHasSeenAnswer(false);
+  }, [currentCard]);
+
+  if (cardsError || collectionsError) {
+    return (
+      <>
+        <PageTitle>Quiz</PageTitle>
+        <FeedbackMessage role="alert">Error loading</FeedbackMessage>
+      </>
+    );
+  }
+
+  if (cardsLoading || colectionsLoading) {
+    return (
+      <>
+        <PageTitle>Quiz</PageTitle>
+        <FeedbackMessage role="status" aria-live="polite">
+          Loading data... Please wait...
+        </FeedbackMessage>
+      </>
+    );
+  }
+
+  if (quizCards.length === 0) {
+    return (
+      <>
+        <PageTitle>Quiz</PageTitle>
+        <FeedbackMessage role="status">Preparing quiz...</FeedbackMessage>
+      </>
+    );
   }
 
   return (
     <>
       <PageTitle>Quiz</PageTitle>
-      {currentCard < amountOfCards ? (
+      {currentCard < quizCards.length ? (
         <>
           <FeedbackMessage>
             {currentCard + 1}/{amountOfCards}
           </FeedbackMessage>
           <FlashCardList
-            flashcards={[enrichedFlashcards[currentCard]]}
+            flashcards={[quizCards[currentCard]]}
             onShowAnswer={() => setHasSeenAnswer(true)}
           />
 
