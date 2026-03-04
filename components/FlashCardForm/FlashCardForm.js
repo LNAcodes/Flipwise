@@ -76,7 +76,7 @@ export default function FlashCardForm({
   }
 
   return (
-    <Form data-js="flashCardForm" onSubmit={handleSubmit}>
+    <Form id="add-flashcard" data-js="flashCardForm" onSubmit={handleSubmit}>
       <Label htmlFor="question">Question</Label>
       <Input
         name="question"
