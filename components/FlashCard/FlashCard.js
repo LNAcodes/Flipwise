@@ -1,5 +1,3 @@
-// components\FlashCard\FlashCard.js
-import useSWR from "swr";
 // components/FlashCard/FlashCard.js
 
 import { useState } from "react";
@@ -9,7 +7,7 @@ import { useFlipHint } from "@/hooks/useFlipHint";
 import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { faEdit } from "@fortawesome/free-solid-svg-icons";
 import BookmarkButton from "../Bookmarks/bookmarks";
 
 /* Styling */
@@ -74,8 +72,6 @@ const Label = styled.p`
   line-height: 0;
 `;
 
-const Button = styled.button``;
-
 const StyledLink = styled(Link)`
   gap: 6px;
   padding: 10px;
@@ -98,33 +94,17 @@ const Icon = styled(FontAwesomeIcon)`
 
 export default function FlashCard({
   flashcard,
-  onDelete
   onToggleBookmark,
   isBookmarked,
   id,
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const { showHint, markFirstFlip } = useFlipHint();
-  const id = flashcard._id;
-
-  const [confirm, setConfirm] = useState(false);
 
   function flipCard() {
-    if (confirm) return;
     markFirstFlip();
     setIsFlipped((prev) => !prev);
   }
-  const handleDelete = async (event) => {
-    event.stopPropagation();
-    const response = await fetch(`/api/flashcards/${id}`, {
-      method: "DELETE",
-    });
-    if (response.ok) {
-      onDelete("success");
-    } else {
-      onDelete("error");
-    }
-  };
 
   return (
     <ReactCardFlip
@@ -137,28 +117,6 @@ export default function FlashCard({
       <CardFront $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <Button
-            onClick={(event) => {
-              event.stopPropagation();
-              setConfirm(!confirm);
-            }}
-          >
-            <Icon icon={faTrash} aria-hidden="true" />
-          </Button>
-          {confirm && (
-            <>
-              <Label>Are you sure?</Label>
-              <Button
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setConfirm(false);
-                }}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
-            </>
-          )}
           <BookmarkButton
             id={flashcard._id}
             isBookmarked={isBookmarked}
@@ -166,7 +124,7 @@ export default function FlashCard({
           />
           <StyledLink
             href={`/flashcards/${flashcard._id}`}
-            onClick={(event) => event.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
             aria-label="Edit flashcard"
           >
             <Icon icon={faEdit} aria-hidden="true" />
