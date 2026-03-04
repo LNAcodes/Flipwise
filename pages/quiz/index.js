@@ -35,6 +35,7 @@ const FeedbackMessage = styled.p`
 const Progress = styled.p`
   color: var(--color-accent);
 `;
+
 export default function QuizPage() {
   const [currentCard, setCurrentCard] = useState(0);
 
@@ -78,6 +79,15 @@ export default function QuizPage() {
       color: matchingCollection ? matchingCollection.color : "#defaultColor#",
     };
   });
+
+  // 10 QUIZ CARDS ZUSAMMENSTELLEN
+  function pickCards(cards, amount = 10) {
+    const copy = [...cards];
+    return copy.slice(0, amount);
+  }
+
+  console.log(pickCards(enrichedFlashcards, 10));
+
   return (
     <>
       <PageTitle>Quiz</PageTitle>
