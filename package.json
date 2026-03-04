@@ -17,6 +17,7 @@
     "eslint-config-next": "13.4.8",
     "mongoose": "^9.2.1",
     "next": "13.4.8",
+    "next-auth": "^4.24.13",
     "react": "18.2.0",
     "react-card-flip": "^1.2.3",
     "react-dom": "18.2.0",
