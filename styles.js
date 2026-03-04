@@ -4,7 +4,7 @@ import { createGlobalStyle } from "styled-components";
 export default createGlobalStyle`
 :root {
     --color-primary: #3366ff;
-    --color-secundary: #728994;
+    --color-secondary: #728994;
     --color-accent: #00ff00;
     --nav-active: #ffffff;
     --nav-inactive: #ccc;

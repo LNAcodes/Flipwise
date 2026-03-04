@@ -13,10 +13,9 @@ const FeedbackMessage = styled.p`
   border: 1px solid var(--color-border);
   color: var(--color-accent);
   padding: 10px 14px;
-  border-radius: 16px;
+  border-radius: 20px;
   margin: 10px 0 6px;
 `;
-
 export default function FlashcardsPage() {
   const {
     data: flashcards,

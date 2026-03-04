@@ -32,9 +32,6 @@ const Input = styled.input`
   &:focus::placeholder {
     opacity: 0;
   }
-  &:focus-visible {
-    outline: none;
-  }
   &:user-invalid {
     outline: 2px solid red;
   }
@@ -63,9 +60,6 @@ const Select = styled.select`
     background-color: rgba(0, 20, 100, 0.5);
     padding: 15px;
   }
-  &:focus-visible {
-    outline: none;
-  }
   &:user-invalid {
     outline: 2px solid red;
   }
@@ -81,7 +75,7 @@ const Button = styled.button`
   padding-right: 40px;
   margin: 10px 0;
   &[aria-label="Cancel editing"] {
-    background-color: var(--color-secundary);
+    background-color: var(--color-secondary);
   }
 `;
 const Hint = styled.p`
@@ -112,7 +106,7 @@ const SuccessMessage = styled.p`
   border: 1px solid var(--color-border);
   color: var(--color-accent);
   padding: 10px 14px;
-  border-radius: 16px;
+  border-radius: 20px;
   margin: 10px 0 6px;
 `;
 

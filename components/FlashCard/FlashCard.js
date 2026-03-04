@@ -11,11 +11,9 @@ import { faEdit } from "@fortawesome/free-solid-svg-icons";
 
 /* hexcolor in rgb color umwandeln */
 const hexToRgba = (hex, alpha = 0.7) => {
-  const hexString = hex.replace("#", ""); // entferne '#'
-
-  const redHex = hexString.slice(0, 2); // extract 12----
-  const greenHex = hexString.slice(2, 4); // extract --34--
-  const blueHex = hexString.slice(4, 6); // extract ----56
+  const redHex = hex.slice(1, 3); // extract 12----
+  const greenHex = hex.slice(3, 5); // extract --34--
+  const blueHex = hex.slice(5, 7); // extract ----56
 
   // Hexadezimal (String) in Binärzahl (number) umwandeln
   const red = parseInt(redHex, 16);
