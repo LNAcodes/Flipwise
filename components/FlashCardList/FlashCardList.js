@@ -13,14 +13,26 @@ const ListItem = styled.li`
   margin: 0 0 20px 0;
 `;
 
-export default function FlashCardList({ flashcards = [] }) {
+export default function FlashCardList({
+  flashcards = [],
+  bookmarkIds = [],
+  onToggleBookmark,
+}) {
   return (
     <List>
-      {flashcards.map((flashcard) => (
-        <ListItem key={flashcard._id}>
-          <FlashCard flashcard={flashcard} />
-        </ListItem>
-      ))}
+      {flashcards.map((flashCard) => {
+        const isBookmarked = bookmarkIds.includes(flashCard._id);
+
+        return (
+          <ListItem key={flashCard._id}>
+            <FlashCard
+              flashcard={flashCard}
+              isBookmarked={isBookmarked}
+              onToggleBookmark={onToggleBookmark}
+            />
+          </ListItem>
+        );
+      })}
     </List>
   );
 }

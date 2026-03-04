@@ -11,6 +11,7 @@ import {
   faPlay,
   faBookmark,
   faUser,
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 
 const NavBar = styled.nav`
@@ -109,16 +110,17 @@ export default function Navbar() {
             <LinkText>Add</LinkText>
           </StyledLink>
         </Item>
-        {/* <Item>
+
+        <Item>
           <StyledLink
-            href="/quiz"
-            aria-label="Go to quiz page"
-            aria-current={isActive("/quiz") ? "page" : undefined}
+            href="/bookmarks"
+            aria-label="Go to add card page"
+            aria-current={isActive("/bookmarks") ? "page" : undefined}
           >
-            <Icon icon={faBookmark} aria-hidden="true" />
-            <LinkText>Bookmark</LinkText>
+            <Icon icon={faEye} aria-hidden="true" />
+            <LinkText>Bookmarks</LinkText>
           </StyledLink>
-        </Item> */}
+        </Item>
 
         {/* <Item>
           <StyledLink

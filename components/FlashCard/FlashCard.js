@@ -8,6 +8,7 @@ import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import BookmarkButton from "../Bookmarks/bookmarks";
 
 /* hexcolor in rgb color umwandeln */
 const hexToRgba = (hex, alpha = 0.7) => {
@@ -51,7 +52,7 @@ const CardBack = styled.article`
 
 const CardHeader = styled.div`
   display: flex;
-  align-items: center;
+
   justify-content: space-between;
   padding: 5px 0 0 5px;
 `;
@@ -111,7 +112,12 @@ const Icon = styled(FontAwesomeIcon)`
   flex: 0 0 auto;
 `;
 
-export default function FlashCard({ flashcard }) {
+export default function FlashCard({
+  flashcard,
+  onToggleBookmark,
+  isBookmarked,
+  id,
+}) {
   const [isFlipped, setIsFlipped] = useState(false);
   const { showHint, markFirstFlip } = useFlipHint();
 
@@ -131,6 +137,11 @@ export default function FlashCard({ flashcard }) {
       <CardFront $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
+          <BookmarkButton
+            id={flashcard._id}
+            isBookmarked={isBookmarked}
+            onToggleBookmark={onToggleBookmark}
+          />
           <StyledLink
             href={`/flashcards/${flashcard._id}`}
             onClick={(e) => e.stopPropagation()}
@@ -152,6 +163,11 @@ export default function FlashCard({ flashcard }) {
       <CardBack $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
+          <BookmarkButton
+            id={flashcard._id}
+            isBookmarked={isBookmarked}
+            onToggleBookmark={onToggleBookmark}
+          />
         </CardHeader>
 
         <CardBody>
