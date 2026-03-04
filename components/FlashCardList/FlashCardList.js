@@ -35,7 +35,8 @@ const EmptyStateLink = styled(Link)`
   margin-top: 10px;
 `;
 
-export default function FlashCardList({ flashcards = [] }) {
+export default function FlashCardList({ flashcards = [], bookmarkIds = [],
+  onToggleBookmark,}) {
   const { mutate } = useSWR("/api/flashcards");
   const [message, setMessage] = useState(null);
 
@@ -52,22 +53,30 @@ export default function FlashCardList({ flashcards = [] }) {
       setTimeout(() => setMessage(null), 3000);
     }
   }
+
+}) {
   return (
-    <>
+      <>
       {message && <Message $type={message.type}>{message.text}</Message>}
       {flashcards.length === 0 && (
         <>
           <EmptyState>There are no flashcards yet.</EmptyState>
           <EmptyStateLink href="/add-card">Add a new flashcard</EmptyStateLink>
         </>
-      )}
-      <List>
-        {flashcards.map((flashcard) => (
-          <ListItem key={flashcard._id}>
-            <FlashCard flashcard={flashcard} onDelete={handleDeleteResult} />
+    <List>
+      {flashcards.map((flashCard) => {
+        const isBookmarked = bookmarkIds.includes(flashCard._id);
+
+        return (
+          <ListItem key={flashCard._id} onDelete={handleDeleteResult}>
+            <FlashCard
+              flashcard={flashCard}
+              isBookmarked={isBookmarked}
+              onToggleBookmark={onToggleBookmark}
+            />
           </ListItem>
-        ))}
-      </List>
-    </>
+        );
+      })}
+    </List>
   );
 }

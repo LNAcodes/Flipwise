@@ -8,7 +8,10 @@ import { loadBookmarks, toggleBookmark } from "@/utils/bookmarkHelpers";
 const PageTitle = styled.h1`
   padding: 0;
 `;
-
+const Message = styled.h2`
+  color: #f10707;
+  font-size: 20px;
+`;
 export default function FlashcardsPage() {
   const {
     data: flashcards,
@@ -37,16 +40,27 @@ export default function FlashcardsPage() {
     const matchingCollection = collections.find(
       (col) => col.name === card.collection
     );
+
     return {
       ...card,
       color: matchingCollection ? matchingCollection.color : "#defaultColor#",
     };
   });
+  const bookmarkedCards = enrichedFlashcards.filter((card) =>
+    bookmarkIds.includes(card._id)
+  );
+  /* let hasBookmarkes = false;
+  if (bookmarkedCards.length != 0) {
+    hasBookmarkes = true; 
+  }*/
   return (
     <>
-      <PageTitle>Card List</PageTitle>
+      <PageTitle>Bookmark List</PageTitle>
+      {bookmarkedCards.length === 0 && (
+        <Message aria-live="polite">There are no Bookmarks yet!</Message>
+      )}
       <FlashCardList
-        flashcards={enrichedFlashcards}
+        flashcards={bookmarkedCards}
         bookmarkIds={bookmarkIds}
         onToggleBookmark={handleToggleBookmark}
       />
@@ -55,6 +69,6 @@ export default function FlashcardsPage() {
 }
 
 FlashcardsPage.meta = {
-  title: "Card List",
-  description: "A list of all your cards.",
+  title: "Bookmark List",
+  description: "A list of all my bookmarked cards.",
 };

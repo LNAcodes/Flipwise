@@ -10,6 +10,7 @@ import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import BookmarkButton from "../Bookmarks/bookmarks";
 
 /* Styling */
 const CardFront = styled.article`
@@ -38,7 +39,7 @@ const CardBack = styled.article`
 
 const CardHeader = styled.div`
   display: flex;
-  align-items: center;
+
   justify-content: space-between;
   background: ${(props) => props.$color || "var(--color-primary)"};
   padding: 5px 0 5px 10px;
@@ -95,7 +96,13 @@ const Icon = styled(FontAwesomeIcon)`
   flex: 0 0 auto;
 `;
 
-export default function FlashCard({ flashcard, onDelete }) {
+export default function FlashCard({
+  flashcard,
+  onDelete
+  onToggleBookmark,
+  isBookmarked,
+  id,
+}) {
   const [isFlipped, setIsFlipped] = useState(false);
   const { showHint, markFirstFlip } = useFlipHint();
   const id = flashcard._id;
@@ -152,6 +159,11 @@ export default function FlashCard({ flashcard, onDelete }) {
               <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
             </>
           )}
+          <BookmarkButton
+            id={flashcard._id}
+            isBookmarked={isBookmarked}
+            onToggleBookmark={onToggleBookmark}
+          />
           <StyledLink
             href={`/flashcards/${flashcard._id}`}
             onClick={(event) => event.stopPropagation()}
@@ -173,6 +185,11 @@ export default function FlashCard({ flashcard, onDelete }) {
       <CardBack $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
+          <BookmarkButton
+            id={flashcard._id}
+            isBookmarked={isBookmarked}
+            onToggleBookmark={onToggleBookmark}
+          />
         </CardHeader>
 
         <CardBody>
