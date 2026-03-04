@@ -1,3 +1,5 @@
+// components\Navbar\Navbar.js
+
 import Link from "next/link";
 import styled from "styled-components";
 import { useRouter } from "next/router";
@@ -7,6 +9,9 @@ import {
   faListUl,
   faPlusCircle,
   faPlay,
+  faBookmark,
+  faUser,
+  faEye,
 } from "@fortawesome/free-solid-svg-icons";
 
 const NavBar = styled.nav`
@@ -19,7 +24,10 @@ const List = styled.ul`
   padding: 0;
   list-style: none;
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   gap: 30px;
+  height: 50px;
 `;
 
 const Item = styled.li`
@@ -30,30 +38,30 @@ const StyledLink = styled(Link)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 3px;
   width: 100%;
-  padding: 10px;
+  padding: 0;
   text-align: center;
-  color: var(--color-primary);
+  color: var(--nav-inactive);
   text-decoration: none;
-  min-height: 44px;
+  min-height: 40px;
 
   &:hover {
-    color: #313131;
+    color: var(--nav-active);
   }
   &[aria-current="page"] {
-    color: #1bb210;
+    color: var(--nav-active);
   }
 `;
 const Icon = styled(FontAwesomeIcon)`
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   max-width: none;
   flex: 0 0 auto;
 `;
 
 const LinkText = styled.span`
-  font-size: 12px;
+  font-size: 11px;
 `;
 
 export default function Navbar() {
@@ -88,7 +96,7 @@ export default function Navbar() {
             aria-current={isActive("/flashcards") ? "page" : undefined}
           >
             <Icon icon={faListUl} aria-hidden="true" />
-            <LinkText>Card List</LinkText>
+            <LinkText>Cards</LinkText>
           </StyledLink>
         </Item>
 
@@ -99,7 +107,18 @@ export default function Navbar() {
             aria-current={isActive("/add-card") ? "page" : undefined}
           >
             <Icon icon={faPlusCircle} aria-hidden="true" />
-            <LinkText>Add Card</LinkText>
+            <LinkText>Add</LinkText>
+          </StyledLink>
+        </Item>
+
+        <Item>
+          <StyledLink
+            href="/bookmarks"
+            aria-label="Go to add card page"
+            aria-current={isActive("/bookmarks") ? "page" : undefined}
+          >
+            <Icon icon={faEye} aria-hidden="true" />
+            <LinkText>Bookmarks</LinkText>
           </StyledLink>
         </Item>
 
@@ -111,6 +130,17 @@ export default function Navbar() {
           >
             <Icon icon={faPlay} aria-hidden="true" />
             <LinkText>Quiz</LinkText>
+          </StyledLink>
+        </Item> */}
+
+        {/* <Item>
+          <StyledLink
+            href="/quiz"
+            aria-label="Go to quiz page"
+            aria-current={isActive("/quiz") ? "page" : undefined}
+          >
+            <Icon icon={faUser} aria-hidden="true" />
+            <LinkText>Profile</LinkText>
           </StyledLink>
         </Item> */}
       </List>

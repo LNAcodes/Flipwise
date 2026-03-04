@@ -1,5 +1,6 @@
 import Document, { Html, Head, Main, NextScript } from "next/document";
 import { ServerStyleSheet } from "styled-components";
+import { poppins } from "@/styles/fonts";
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
@@ -25,7 +26,7 @@ export default class MyDocument extends Document {
 
   render() {
     return (
-      <Html lang="en">
+      <Html lang="en" className={poppins.variable}>
         <Head />
         <body>
           <Main />
