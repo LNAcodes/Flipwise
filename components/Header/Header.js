@@ -11,19 +11,18 @@ const StyledHeader = styled.header`
   display: flex;
   justify-content: center;
   padding: 16px 24px;
-  background-color: var(--bg-color-light);
+  background: var(--background-dark);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 20, 100, 1) 0%,
+    rgba(0, 20, 100, 0.3) 100%
+  );
+  backdrop-filter: blur(5px);
 `;
 
 const Logo = styled(Link)`
-  background-color: var(--color-primary);
-  font-size: 2rem;
-  color: var(--color-accent);
   display: inline-flex;
   align-items: center;
-  text-decoration: none;
-  border: 1px solid var(--color-primary);
-  border-radius: 12px;
-  padding: 5px 20px 5px 10px;
 `;
 
 export default function Header() {
@@ -32,12 +31,11 @@ export default function Header() {
       <Logo href="/" aria-label="Go to Homepage">
         <Image
           src="/assets/images/logo-flipwise.png"
-          width={40}
-          height={40}
+          width={155}
+          height={77}
           alt="Logo FlipWise"
           priority
         />
-        FlipWise
       </Logo>
     </StyledHeader>
   );
