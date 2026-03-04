@@ -6,15 +6,35 @@ import { useState } from "react";
 import Image from "next/image";
 
 const ProfileTitle = styled.h2``;
-const Text = styled.p``;
-const Button = styled.button``;
+const Text = styled.p`
+  color: white;
+`;
+const Button = styled.button`
+  margin: 10px 0;
+`;
 
-export default function Component() {
+const ProfilePicturePlaceholder = styled.div`
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: white;
+  margin: 0 auto;
+`;
+export default function ProfilePage() {
   const { data: session } = useSession();
 
   if (session) {
     return (
       <>
+        <ProfileTitle>Profile</ProfileTitle>
+        {session.user.image && (
+          <Image
+            src={session.user.image}
+            alt="Profile picture"
+            width={50}
+            height={50}
+          />
+        )}
         <Text>Welcome {session.user.name}</Text>
         <Text>
           You're logged in now. You can add and manage your own flashcards.
@@ -28,7 +48,7 @@ export default function Component() {
   return (
     <>
       <ProfileTitle></ProfileTitle>
-      <Image></Image>
+      <ProfilePicturePlaceholder />
       <Text>You're logged out</Text>
       <Text>
         Log in to FlipWise (GitHub only for now) to view your profile and create
