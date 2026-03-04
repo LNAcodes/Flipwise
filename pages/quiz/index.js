@@ -91,11 +91,19 @@ export default function QuizPage() {
   return (
     <>
       <PageTitle>Quiz</PageTitle>
-      <FlashCardList flashcards={[enrichedFlashcards[currentCard]]} />
-      <Button onClick={() => setCurrentCard((i) => i + 1)}>Next</Button>
-      <Progress>
-        {currentCard + 1}/{enrichedFlashcards.length}
-      </Progress>
+      {currentCard < 10 ? (
+        <>
+          <FlashCardList flashcards={[enrichedFlashcards[currentCard]]} />
+          <Button onClick={() => setCurrentCard((i) => i + 1)}>
+            Next Card
+          </Button>
+          <Progress>
+            {currentCard + 1}/{enrichedFlashcards.length}
+          </Progress>
+        </>
+      ) : (
+        <p>alle karten angesehen</p>
+      )}
     </>
   );
 }
