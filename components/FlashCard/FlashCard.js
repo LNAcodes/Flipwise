@@ -7,7 +7,7 @@ import { useFlipHint } from "@/hooks/useFlipHint";
 import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import BookmarkButton from "../Bookmarks/bookmarks";
 
 /* hexcolor in rgb color umwandeln */
@@ -112,20 +112,36 @@ const Icon = styled(FontAwesomeIcon)`
   flex: 0 0 auto;
 `;
 
+const Button = styled.button`
+  margin: 10px 0;
+`;
+
 export default function FlashCard({
   flashcard,
   onToggleBookmark,
   isBookmarked,
-  id,
+  onDelete,
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const id = flashcard._id;
   const { showHint, markFirstFlip } = useFlipHint();
 
   function flipCard() {
     markFirstFlip();
     setIsFlipped((prev) => !prev);
   }
-
+  const handleDelete = async (event) => {
+    event.stopPropagation();
+    const response = await fetch(`/api/flashcards/${id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      onDelete("success");
+    } else {
+      onDelete("error");
+    }
+  };
   return (
     <ReactCardFlip
       flipDirection="horizontal"
@@ -137,6 +153,28 @@ export default function FlashCard({
       <CardFront $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
+          <Button
+            onClick={(event) => {
+              event.stopPropagation();
+              setConfirm(!confirm);
+            }}
+          >
+            <Icon icon={faTrash} aria-hidden="true" />
+          </Button>
+          {confirm && (
+            <>
+              <Label>Are you sure?</Label>
+              <Button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setConfirm(false);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
+            </>
+          )}
           <BookmarkButton
             id={flashcard._id}
             isBookmarked={isBookmarked}
