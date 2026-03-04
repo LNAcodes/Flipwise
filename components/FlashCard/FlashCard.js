@@ -1,3 +1,5 @@
+// components\FlashCard\FlashCard.js
+import useSWR from "swr";
 // components/FlashCard/FlashCard.js
 
 import { useState } from "react";
@@ -7,7 +9,7 @@ import { useFlipHint } from "@/hooks/useFlipHint";
 import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import BookmarkButton from "../Bookmarks/bookmarks";
 
 /* hexcolor in rgb color umwandeln */
@@ -94,6 +96,8 @@ const Label = styled.p`
   line-height: 1;
 `;
 
+const Button = styled.button``;
+
 const StyledLink = styled(Link)`
   gap: 6px;
   padding: 10px 5px 10px 10px;
@@ -119,14 +123,30 @@ export default function FlashCard({
   onToggleBookmark,
   isBookmarked,
   id,
+  onDelete,
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const { showHint, markFirstFlip } = useFlipHint();
+  const id = flashcard._id;
+  const { mutate } = useSWR("/api/flashcards");
+  const [confirm, setConfirm] = useState(false);
 
   function flipCard() {
+    if (confirm) return;
     markFirstFlip();
     setIsFlipped((prev) => !prev);
   }
+  const handleDelete = async () => {
+    event.stopPropagation();
+    const response = await fetch(`/api/flashcards/${id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      onDelete("success");
+    } else {
+      onDelete("error");
+    }
+  };
 
   return (
     <ReactCardFlip
@@ -144,9 +164,34 @@ export default function FlashCard({
             isBookmarked={isBookmarked}
             onToggleBookmark={onToggleBookmark}
           />
+          <Button
+            onClick={(event) => {
+              event.stopPropagation();
+              console.log("trash1 clicked, confirm state:", confirm);
+              setConfirm(!confirm);
+            }}
+          >
+            <Icon icon={faTrash} aria-hidden="true" />
+          </Button>
+          {confirm && (
+            <>
+              <Label>Are you sure?</Label>
+              <Button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setConfirm(false);
+                  setSuccessMessage(true);
+                  console.log("finally deleted");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
+            </>
+          )}
           <StyledLink
             href={`/flashcards/${flashcard._id}`}
-            onClick={(e) => e.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
             aria-label="Edit flashcard"
           >
             <Icon icon={faEdit} aria-hidden="true" />
