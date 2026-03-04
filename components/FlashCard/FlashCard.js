@@ -118,6 +118,7 @@ export default function FlashCard({
   isBookmarked,
   id,
   onShowAnswer,
+  showActions = true,
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
   const { showHint, markFirstFlip } = useFlipHint();
@@ -144,18 +145,22 @@ export default function FlashCard({
       <CardFront $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <BookmarkButton
-            id={flashcard._id}
-            isBookmarked={isBookmarked}
-            onToggleBookmark={onToggleBookmark}
-          />
-          <StyledLink
-            href={`/flashcards/${flashcard._id}`}
-            onClick={(e) => e.stopPropagation()}
-            aria-label="Edit flashcard"
-          >
-            <Icon icon={faEdit} aria-hidden="true" />
-          </StyledLink>
+          {showActions && (
+            <>
+              <BookmarkButton
+                id={flashcard._id}
+                isBookmarked={isBookmarked}
+                onToggleBookmark={onToggleBookmark}
+              />
+              <StyledLink
+                href={`/flashcards/${flashcard._id}`}
+                onClick={(e) => e.stopPropagation()}
+                aria-label="Edit flashcard"
+              >
+                <Icon icon={faEdit} aria-hidden="true" />
+              </StyledLink>
+            </>
+          )}
         </CardHeader>
 
         <CardBody>
@@ -170,11 +175,13 @@ export default function FlashCard({
       <CardBack $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <BookmarkButton
-            id={flashcard._id}
-            isBookmarked={isBookmarked}
-            onToggleBookmark={onToggleBookmark}
-          />
+          {showActions && (
+            <BookmarkButton
+              id={flashcard._id}
+              isBookmarked={isBookmarked}
+              onToggleBookmark={onToggleBookmark}
+            />
+          )}
         </CardHeader>
 
         <CardBody>

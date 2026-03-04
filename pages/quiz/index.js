@@ -55,23 +55,30 @@ export default function QuizPage() {
     isLoading: colectionsLoading,
   } = useSWR("/api/collections");
 
-  const enrichedFlashcards = flashcards.map((card) => {
-    const matchingCollection = collections.find(
+  const enrichedFlashcards = (flashcards ?? []).map((card) => {
+    const matchingCollection = (collections ?? []).find(
       (col) => col.name === card.collection
     );
     return {
       ...card,
-      color: matchingCollection ? matchingCollection.color : "#defaultColor#",
+      color: matchingCollection ? matchingCollection.color : "#000000",
     };
   });
 
   useEffect(() => {
-    if (!enrichedFlashcards.length) return;
+    if (!flashcards?.length) return;
+    if (!collections?.length) return;
     if (quizCards.length > 0) return;
 
     setQuizCards(pickRandomCards(enrichedFlashcards, amountOfCards));
     setCurrentCard(0);
-  }, [enrichedFlashcards, amountOfCards, quizCards.length]);
+  }, [
+    flashcards,
+    collections,
+    enrichedFlashcards,
+    amountOfCards,
+    quizCards.length,
+  ]);
 
   useEffect(() => {
     setHasSeenAnswer(false);
@@ -112,11 +119,12 @@ export default function QuizPage() {
       {currentCard < quizCards.length ? (
         <>
           <FeedbackMessage>
-            {currentCard + 1}/{amountOfCards}
+            {currentCard + 1}/{quizCards.length}
           </FeedbackMessage>
           <FlashCardList
             flashcards={[quizCards[currentCard]]}
             onShowAnswer={() => setHasSeenAnswer(true)}
+            showActions={false}
           />
 
           {hasSeenAnswer && (

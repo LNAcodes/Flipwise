@@ -18,6 +18,7 @@ export default function FlashCardList({
   bookmarkIds = [],
   onToggleBookmark,
   onShowAnswer,
+  showActions = true,
 }) {
   return (
     <List>
@@ -31,6 +32,7 @@ export default function FlashCardList({
               isBookmarked={isBookmarked}
               onToggleBookmark={onToggleBookmark}
               onShowAnswer={onShowAnswer}
+              showActions={showActions}
             />
           </ListItem>
         );
