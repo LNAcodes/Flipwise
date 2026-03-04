@@ -32,12 +32,14 @@ const FeedbackMessage = styled.p`
   margin: 10px 0 6px;
 `;
 
-const Progress = styled.p`
+const Feedback = styled.p`
   color: var(--color-accent);
 `;
 
 export default function QuizPage() {
   const [currentCard, setCurrentCard] = useState(0);
+
+  const amountOfCards = 10;
 
   const {
     data: flashcards,
@@ -81,28 +83,30 @@ export default function QuizPage() {
   });
 
   // 10 QUIZ CARDS ZUSAMMENSTELLEN
-  function pickCards(cards, amount = 10) {
+  function pickCards(cards, amountOfCards) {
     const copy = [...cards];
-    return copy.slice(0, amount);
+    return copy.slice(0, amountOfCards);
   }
 
-  console.log(pickCards(enrichedFlashcards, 10));
+  console.log(pickCards(enrichedFlashcards, amountOfCards));
 
   return (
     <>
       <PageTitle>Quiz</PageTitle>
-      {currentCard < 10 ? (
+      {currentCard < amountOfCards ? (
         <>
+          <FeedbackMessage>
+            {currentCard + 1}/{amountOfCards}
+          </FeedbackMessage>
           <FlashCardList flashcards={[enrichedFlashcards[currentCard]]} />
           <Button onClick={() => setCurrentCard((i) => i + 1)}>
             Next Card
           </Button>
-          <Progress>
-            {currentCard + 1}/{enrichedFlashcards.length}
-          </Progress>
         </>
       ) : (
-        <p>alle karten angesehen</p>
+        <FeedbackMessage>
+          All {amountOfCards} cards have been viewed.
+        </FeedbackMessage>
       )}
     </>
   );
