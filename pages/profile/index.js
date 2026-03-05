@@ -61,7 +61,7 @@ export default function ProfilePage() {
         )}
         <Text>Welcome {session.user.name}</Text>
         <Text>
-          You're logged in now. You can add and manage your own flashcards.
+          You are logged in now. You can add and manage your own flashcards.
         </Text>
         <Button
           onClick={async () => {
@@ -79,7 +79,7 @@ export default function ProfilePage() {
       {logoutMessage && <Text>You have been logged out successfully.</Text>}
       <ProfileTitle>Profile</ProfileTitle>
       <ProfilePicturePlaceholder />
-      <Text>You're logged out</Text>
+      <Text>You are logged out</Text>
       <Text>
         Log in to FlipWise (GitHub only for now) to view your profile and create
         your own cards.
