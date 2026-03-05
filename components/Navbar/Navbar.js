@@ -122,7 +122,7 @@ export default function Navbar() {
           </StyledLink>
         </Item>
 
-        {/* <Item>
+        <Item>
           <StyledLink
             href="/quiz"
             aria-label="Go to quiz page"
@@ -131,7 +131,7 @@ export default function Navbar() {
             <Icon icon={faPlay} aria-hidden="true" />
             <LinkText>Quiz</LinkText>
           </StyledLink>
-        </Item> */}
+        </Item>
 
         <Item>
           <StyledLink

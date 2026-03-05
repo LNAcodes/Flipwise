@@ -2,9 +2,10 @@
 
 import styled from "styled-components";
 import { useState } from "react";
-import Link from "next/link";
 import FlashCard from "@/components/FlashCard/FlashCard";
 import useSWR from "swr";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 const List = styled.ul`
   margin: 0;
@@ -24,24 +25,43 @@ const Message = styled.div`
   color: ${(props) => (props.$type === "success" ? "#155724" : "#721c24")};
 `;
 
-const EmptyState = styled.p`
-  text-align: center;
-  margin-top: 20px;
-`;
-
-const EmptyStateLink = styled(Link)`
+const StyledLink = styled(Link)`
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 30px;
   display: block;
-  text-align: center;
-  margin-top: 10px;
+  cursor: pointer;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 60px;
+  padding: 15px 60px;
+  margin: 20px 0 20px 0;
+  text-decoration: none;
+  &:hover {
+    background-color: var(--color-secondary);
+  }
+`;
+const FeedbackMessage = styled.p`
+  background: rgba(0, 200, 120, 0.5);
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  padding: 10px 14px;
+  border-radius: 20px;
+  margin: 20px 0 20px 0;
+  min-width: 300px;
 `;
 
 export default function FlashCardList({
   flashcards = [],
   bookmarkIds = [],
   onToggleBookmark,
+  onShowAnswer,
+  showActions = true,
+  onDelete,
 }) {
   const { mutate } = useSWR("/api/flashcards");
   const [message, setMessage] = useState(null);
+  const router = useRouter();
 
   function handleDeleteResult(status) {
     if (status === "success") {
@@ -62,8 +82,10 @@ export default function FlashCardList({
       {message && <Message $type={message.type}>{message.text}</Message>}
       {flashcards.length === 0 && (
         <>
-          <EmptyState>There are no flashcards yet.</EmptyState>
-          <EmptyStateLink href="/add-card">Add a new flashcard</EmptyStateLink>
+          <FeedbackMessage role="status">
+            No flashcards yet... start to add one.
+          </FeedbackMessage>
+          <StyledLink href="/add-card">Add a new flashcard</StyledLink>
         </>
       )}
       <List>
@@ -75,7 +97,9 @@ export default function FlashCardList({
                 flashcard={flashCard}
                 isBookmarked={isBookmarked}
                 onToggleBookmark={onToggleBookmark}
-                onDelete={handleDeleteResult}
+                onShowAnswer={onShowAnswer}
+                showActions={showActions}
+                onDelete={onDelete ?? handleDeleteResult}
               />
             </ListItem>
           );

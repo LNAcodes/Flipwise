@@ -21,6 +21,7 @@ export default function FlashcardsPage() {
     data: flashcards,
     error: cardsError,
     isLoading: cardsLoading,
+    mutate,
   } = useSWR("/api/flashcards");
   const {
     data: collections,
@@ -29,17 +30,17 @@ export default function FlashcardsPage() {
   } = useSWR("/api/collections");
 
   const [bookmarkIds, setBookmarkIds] = useState([]);
-  
+
   useEffect(() => {
     const initialBookmarks = loadBookmarks();
     setBookmarkIds(initialBookmarks);
   }, []);
-  
+
   function handleToggleBookmark(id) {
     const updateBookmarks = toggleBookmark(id);
     setBookmarkIds(updateBookmarks);
   }
-  
+
   if (cardsError || collectionsError) {
     return (
       <>
@@ -48,7 +49,7 @@ export default function FlashcardsPage() {
       </>
     );
   }
-  
+
   if (cardsLoading || colectionsLoading) {
     return (
       <>
@@ -60,8 +61,6 @@ export default function FlashcardsPage() {
     );
   }
 
-
-  
   const enrichedFlashcards = flashcards.map((card) => {
     const matchingCollection = collections.find(
       (col) => col.name === card.collection
@@ -78,6 +77,7 @@ export default function FlashcardsPage() {
         flashcards={enrichedFlashcards}
         bookmarkIds={bookmarkIds}
         onToggleBookmark={handleToggleBookmark}
+        onDelete={() => mutate()}
       />
     </>
   );

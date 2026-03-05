@@ -1,6 +1,6 @@
 // components/FlashCard/FlashCard.js
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
 import { useFlipHint } from "@/hooks/useFlipHint";
@@ -31,6 +31,7 @@ const CardFront = styled.article`
   overflow: hidden;
   margin-top: 10px;
   padding: 0 10px 0 10px;
+  min-width: 300px;
 
   &:hover {
     cursor: pointer;
@@ -44,6 +45,7 @@ const CardBack = styled.article`
   overflow: hidden;
   margin-top: 10px;
   padding: 0 10px 0 10px;
+  min-width: 300px;
 
   &:hover {
     cursor: pointer;
@@ -120,6 +122,8 @@ export default function FlashCard({
   flashcard,
   onToggleBookmark,
   isBookmarked,
+  onShowAnswer,
+  showActions = true,
   onDelete,
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
@@ -131,6 +135,13 @@ export default function FlashCard({
     markFirstFlip();
     setIsFlipped((prev) => !prev);
   }
+
+  useEffect(() => {
+    if (isFlipped) {
+      onShowAnswer?.();
+    }
+  }, [isFlipped, onShowAnswer]);
+
   const handleDelete = async (event) => {
     event.stopPropagation();
     const response = await fetch(`/api/flashcards/${id}`, {
@@ -153,40 +164,44 @@ export default function FlashCard({
       <CardFront $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <Button
-            onClick={(event) => {
-              event.stopPropagation();
-              setConfirm(!confirm);
-            }}
-          >
-            <Icon icon={faTrash} aria-hidden="true" />
-          </Button>
-          {confirm && (
+          {showActions && (
             <>
-              <Label>Are you sure?</Label>
               <Button
                 onClick={(event) => {
                   event.stopPropagation();
-                  setConfirm(false);
+                  setConfirm(!confirm);
                 }}
               >
-                Cancel
+                <Icon icon={faTrash} aria-hidden="true" />
               </Button>
-              <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
+              {confirm && (
+                <>
+                  <Label>Are you sure?</Label>
+                  <Button
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setConfirm(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
+                </>
+              )}
+              <BookmarkButton
+                id={flashcard._id}
+                isBookmarked={isBookmarked}
+                onToggleBookmark={onToggleBookmark}
+              />
+              <StyledLink
+                href={`/flashcards/${flashcard._id}`}
+                onClick={(e) => e.stopPropagation()}
+                aria-label="Edit flashcard"
+              >
+                <Icon icon={faEdit} aria-hidden="true" />
+              </StyledLink>
             </>
           )}
-          <BookmarkButton
-            id={flashcard._id}
-            isBookmarked={isBookmarked}
-            onToggleBookmark={onToggleBookmark}
-          />
-          <StyledLink
-            href={`/flashcards/${flashcard._id}`}
-            onClick={(e) => e.stopPropagation()}
-            aria-label="Edit flashcard"
-          >
-            <Icon icon={faEdit} aria-hidden="true" />
-          </StyledLink>
         </CardHeader>
 
         <CardBody>
@@ -201,11 +216,13 @@ export default function FlashCard({
       <CardBack $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <BookmarkButton
-            id={flashcard._id}
-            isBookmarked={isBookmarked}
-            onToggleBookmark={onToggleBookmark}
-          />
+          {showActions && (
+            <BookmarkButton
+              id={flashcard._id}
+              isBookmarked={isBookmarked}
+              onToggleBookmark={onToggleBookmark}
+            />
+          )}
         </CardHeader>
 
         <CardBody>
