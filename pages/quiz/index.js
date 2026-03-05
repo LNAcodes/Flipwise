@@ -43,6 +43,20 @@ const WrongAnswerButton = styled.button`
     background-color: var(--color-secondary);
   }
 `;
+const RestartButton = styled.button`
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 50px;
+  padding: 5px 20px;
+  width: 50%;
+  &:hover {
+    background-color: var(--color-secondary);
+  }
+`;
 const FeedbackMessage = styled.p`
   background: rgba(0, 200, 120, 0.5);
   border: 1px solid var(--color-border);
@@ -65,6 +79,12 @@ export default function QuizPage() {
     defaultValue: [],
   });
   const [currentCard, setCurrentCard] = useLocalStorageState("currentcard", {
+    defaultValue: 0,
+  });
+  const [countCorrect, setCountCorrect] = useLocalStorageState("countcorrect", {
+    defaultValue: 0,
+  });
+  const [countWrong, setCountWrong] = useLocalStorageState("countwrong", {
     defaultValue: 0,
   });
 
@@ -92,6 +112,15 @@ export default function QuizPage() {
       color: matchingCollection ? matchingCollection.color : "#000000",
     };
   });
+
+  function onHandleAnswer(isCorrect) {
+    if (isCorrect) {
+      setCountCorrect((i) => i + 1);
+    } else {
+      setCountWrong((i) => i + 1);
+    }
+    setCurrentCard((i) => i + 1);
+  }
 
   function handleQuizRestart() {
     setCurrentCard(0);
@@ -152,7 +181,8 @@ export default function QuizPage() {
       {currentCard < quizCards.length ? (
         <>
           <FeedbackMessage>
-            {currentCard + 1}/{quizCards.length}
+            {currentCard + 1}/{quizCards.length} | Correct: {countCorrect} |
+            Wrong {countWrong}
           </FeedbackMessage>
           <FlashCardList
             flashcards={[quizCards[currentCard]]}
@@ -162,10 +192,10 @@ export default function QuizPage() {
 
           {hasSeenAnswer && (
             <ButtonGroup>
-              <WrongAnswerButton onClick={() => setCurrentCard((i) => i + 1)}>
+              <WrongAnswerButton onClick={() => onHandleAnswer(false)}>
                 Wrong
               </WrongAnswerButton>
-              <CorrectAnswerButton onClick={() => setCurrentCard((i) => i + 1)}>
+              <CorrectAnswerButton onClick={() => onHandleAnswer(true)}>
                 Correct
               </CorrectAnswerButton>
             </ButtonGroup>
@@ -176,7 +206,9 @@ export default function QuizPage() {
           <FeedbackMessage>
             All {quizCards.length} cards have been viewed.
           </FeedbackMessage>
-          <Button onClick={() => handleQuizRestart()}>Restart Quiz</Button>
+          <RestartButton onClick={() => handleQuizRestart()}>
+            Restart Quiz
+          </RestartButton>
         </>
       )}
     </>
