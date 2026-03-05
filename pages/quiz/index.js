@@ -3,18 +3,16 @@
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
 const PageTitle = styled.h1`
   padding: 0;
 `;
-
 const ButtonGroup = styled.div`
   display: flex;
   gap: 30px;
 `;
-
 const Button = styled.button`
   background-color: ${(props) =>
     props.$correct
@@ -36,7 +34,6 @@ const Button = styled.button`
     background-color: var(--color-secondary);
   }
 `;
-
 const RestartButton = styled.button`
   background-color: var(--color-primary);
   border: none;
@@ -60,6 +57,18 @@ const FeedbackMessage = styled.p`
   margin: 10px 0 6px;
   min-width: 300px;
 `;
+const HeadUpDisplay = styled.p`
+  font-size: 13px;
+  font-weight: 400;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid var(--color-border);
+  color: var(--text-color-dark);
+  padding: 10px 14px;
+  border-radius: 20px;
+  margin: 10px 0 6px;
+  min-width: 300px;
+`;
 const List = styled.ul`
   list-style: none;
   text-align: left;
@@ -77,7 +86,7 @@ const ListItem = styled.li`
   text-align: left;
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid var(--color-border);
-  padding: 10px 20px;
+  padding: 5px 20px;
   border-radius: 20px;
   margin: 10px 0 10px 0;
   &:nth-child(2) {
@@ -118,8 +127,16 @@ export default function QuizPage() {
     startedAt: null,
     finishedAt: null,
   });
+  console.log(session);
 
-  const [elapsedTime, setElapsed] = useState(0); // verstrichene Zeit in Millisekunden
+  const [elapsedTime, setElapsedTime] = useState(0); // verstrichene Zeit in Millisekunden
+  const intervalRef = useRef(null);
+
+  const formatSeconds = (ms) =>
+    new Intl.NumberFormat("de-DE", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(ms / 1000);
 
   const amountOfCards = 10;
 
@@ -144,6 +161,22 @@ export default function QuizPage() {
     };
   });
 
+  function startQuiz() {
+    setSession({
+      status: "running",
+      startedAt: new Date().toISOString(),
+      finishedAt: null,
+    });
+  }
+
+  function finishQuiz() {
+    setSession((s) => ({
+      ...s,
+      status: "finished",
+      finishedAt: new Date().toISOString(),
+    }));
+  }
+
   function onHandleAnswer(isCorrect) {
     if (isCorrect) {
       setCountCorrect((i) => i + 1);
@@ -158,6 +191,7 @@ export default function QuizPage() {
     setCountCorrect(0);
     setCountWrong(0);
     setQuizCards([]);
+    startQuiz();
   }
 
   useEffect(() => {
@@ -167,6 +201,7 @@ export default function QuizPage() {
 
     setQuizCards(pickRandomCards(enrichedFlashcards, amountOfCards));
     setCurrentCard(0);
+    startQuiz();
   }, [
     flashcards,
     collections,
@@ -174,6 +209,30 @@ export default function QuizPage() {
     amountOfCards,
     quizCards.length,
   ]);
+
+  useEffect(() => {
+    if (session.status !== "running") return;
+    if (quizCards.length === 0) return;
+    if (currentCard < quizCards.length) return;
+
+    finishQuiz();
+  }, [currentCard, quizCards.length, session.status]);
+
+  useEffect(() => {
+    if (session.status !== "running" || !session.startedAt) return;
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    intervalRef.current = setInterval(() => {
+      const startMs = Date.parse(session.startedAt);
+      setElapsedTime(Date.now() - startMs);
+    }, 250);
+
+    return () => {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    };
+  }, [session.status, session.startedAt]);
+  console.log("Elapsed Time: ", elapsedTime);
 
   useEffect(() => {
     setHasSeenAnswer(false);
@@ -213,10 +272,11 @@ export default function QuizPage() {
       <PageTitle>Quiz</PageTitle>
       {currentCard < quizCards.length ? (
         <>
-          <FeedbackMessage>
-            {currentCard + 1}/{quizCards.length} | Correct: {countCorrect} |
-            Wrong {countWrong}
-          </FeedbackMessage>
+          <HeadUpDisplay>
+            Correct: {countCorrect} | Wrong {countWrong} | Time:{" "}
+            {formatSeconds(elapsedTime)}s | Card: {currentCard + 1}/
+            {quizCards.length}
+          </HeadUpDisplay>
           <FlashCardList
             flashcards={[quizCards[currentCard]]}
             onShowAnswer={() => setHasSeenAnswer(true)}
@@ -241,6 +301,14 @@ export default function QuizPage() {
             <ListItem>Answered cards: {quizCards.length}</ListItem>
             <ListItem>Correct: {countCorrect}</ListItem>
             <ListItem>Wrong: {countWrong} </ListItem>
+            <ListItem>
+              Acuracy: {(countCorrect / quizCards.length) * 100}%
+            </ListItem>
+            <ListItem>Total time: {Math.floor(elapsedTime / 1000)}s </ListItem>
+            <ListItem>
+              Average time per Card:{" "}
+              {Math.floor(elapsedTime / 1000 / quizCards.length)}s
+            </ListItem>
           </List>
           <Button $restart onClick={() => handleQuizRestart()}>
             Restart Quiz
