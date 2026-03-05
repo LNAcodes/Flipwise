@@ -133,16 +133,16 @@ export default function Navbar() {
           </StyledLink>
         </Item> */}
 
-        {/* <Item>
+        <Item>
           <StyledLink
-            href="/quiz"
-            aria-label="Go to quiz page"
-            aria-current={isActive("/quiz") ? "page" : undefined}
+            href="/profile"
+            aria-label="Go to profile page"
+            aria-current={isActive("/profile") ? "page" : undefined}
           >
             <Icon icon={faUser} aria-hidden="true" />
             <LinkText>Profile</LinkText>
           </StyledLink>
-        </Item> */}
+        </Item>
       </List>
     </NavBar>
   );
