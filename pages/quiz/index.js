@@ -123,13 +123,14 @@ export default function QuizPage() {
   const [hasSeenAnswer, setHasSeenAnswer] = useState(false);
 
   const [session, setSession] = useState({
-    status: "idle",
-    startedAt: null,
-    finishedAt: null,
+    defaultValue: { status: "idle", startedAt: null, finishedAt: null },
+    defaultServerValue: { status: "idle", startedAt: null, finishedAt: null },
   });
   console.log(session);
 
-  const [elapsedTime, setElapsedTime] = useState(0); // verstrichene Zeit in Millisekunden
+  // verstrichene Zeit in Millisekunden
+  const [elapsedTime, setElapsedTime] = useState(0);
+
   const intervalRef = useRef(null);
 
   const formatSeconds = (ms) =>
@@ -208,6 +209,9 @@ export default function QuizPage() {
     enrichedFlashcards,
     amountOfCards,
     quizCards.length,
+    setCurrentCard,
+    setQuizCards,
+    startQuiz,
   ]);
 
   useEffect(() => {
@@ -216,7 +220,7 @@ export default function QuizPage() {
     if (currentCard < quizCards.length) return;
 
     finishQuiz();
-  }, [currentCard, quizCards.length, session.status]);
+  }, [currentCard, quizCards.length, session.status, finishQuiz]);
 
   useEffect(() => {
     if (session.status !== "running" || !session.startedAt) return;
@@ -231,7 +235,7 @@ export default function QuizPage() {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     };
-  }, [session.status, session.startedAt]);
+  }, [session.status, session.startedAt, setElapsedTime]);
   console.log("Elapsed Time: ", elapsedTime);
 
   useEffect(() => {
@@ -304,10 +308,10 @@ export default function QuizPage() {
             <ListItem>
               Acuracy: {(countCorrect / quizCards.length) * 100}%
             </ListItem>
-            <ListItem>Total time: {Math.floor(elapsedTime / 1000)}s </ListItem>
+            <ListItem>Total time: {formatSeconds(elapsedTime)} sec</ListItem>
             <ListItem>
-              Average time per Card:{" "}
-              {Math.floor(elapsedTime / 1000 / quizCards.length)}s
+              Ø Avg time/card: {formatSeconds(elapsedTime / quizCards.length)}{" "}
+              sec
             </ListItem>
           </List>
           <Button $restart onClick={() => handleQuizRestart()}>
