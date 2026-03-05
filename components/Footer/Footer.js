@@ -8,8 +8,14 @@ const StyledFooter = styled.footer`
   z-index: 10;
   display: flex;
   justify-content: center;
-  background-color: var(--bg-color-light);
-  padding: 16px 24px;
+  padding: 0 24px;
+  background: var(--background-dark);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 50, 0.3) 0%,
+    rgba(0, 0, 50, 1) 100%
+  );
+  backdrop-filter: blur(5px);
 `;
 
 export default function Footer() {
