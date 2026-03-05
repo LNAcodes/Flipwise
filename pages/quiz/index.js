@@ -66,6 +66,12 @@ const FeedbackMessage = styled.p`
   margin: 10px 0 6px;
   min-width: 300px;
 `;
+const StatsCorrect = styled.span`
+  color: var(--color-correct);
+`;
+const StatsWrong = styled.span`
+  color: var(--color-wrong);
+`;
 
 // ZUFÄLLIGE QUIZ CARDS ZUSAMMENSTELLEN
 function pickRandomCards(cards, amountOfCards) {
@@ -205,9 +211,16 @@ export default function QuizPage() {
         </>
       ) : (
         <>
-          <FeedbackMessage>
-            All {quizCards.length} cards have been viewed.
-          </FeedbackMessage>
+          <FeedbackMessage>Quiz finished.</FeedbackMessage>
+          <ul>
+            <li>Answered cards: {quizCards.length}.</li>
+            <li>
+              <StatsCorrect>Correct: {countCorrect}</StatsCorrect>{" "}
+            </li>
+            <li>
+              <StatsWrong>Wrong: {countWrong}</StatsWrong>
+            </li>
+          </ul>
           <RestartButton onClick={() => handleQuizRestart()}>
             Restart Quiz
           </RestartButton>
