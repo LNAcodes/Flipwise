@@ -124,6 +124,8 @@ export default function QuizPage() {
 
   function handleQuizRestart() {
     setCurrentCard(0);
+    setCountCorrect(0);
+    setCountWrong(0);
     setQuizCards([]);
   }
 
