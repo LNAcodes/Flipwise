@@ -72,6 +72,11 @@ export default function QuizPage() {
     };
   });
 
+  function handleQuizRestart() {
+    setCurrentCard(0);
+    setQuizCards([]);
+  }
+
   useEffect(() => {
     if (!flashcards?.length) return;
     if (!collections?.length) return;
@@ -143,9 +148,9 @@ export default function QuizPage() {
       ) : (
         <>
           <FeedbackMessage>
-            All {amountOfCards} cards have been viewed.
+            All {quizCards.length} cards have been viewed.
           </FeedbackMessage>
-          <Button onClick={() => setCurrentCard(0)}>Restart Quiz</Button>
+          <Button onClick={() => handleQuizRestart()}>Restart Quiz</Button>
         </>
       )}
     </>
