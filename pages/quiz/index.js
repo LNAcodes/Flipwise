@@ -113,6 +113,14 @@ export default function QuizPage() {
 
   const [hasSeenAnswer, setHasSeenAnswer] = useState(false);
 
+  const [session, setSession] = useState({
+    status: "idle",
+    startedAt: null,
+    finishedAt: null,
+  });
+
+  const [elapsedTime, setElapsed] = useState(0); // verstrichene Zeit in Millisekunden
+
   const amountOfCards = 10;
 
   const {
