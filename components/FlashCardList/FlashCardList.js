@@ -41,6 +41,7 @@ export default function FlashCardList({
   onToggleBookmark,
   onShowAnswer,
   showActions = true,
+  onDelete,
 }) {
   const { mutate } = useSWR("/api/flashcards");
   const [message, setMessage] = useState(null);
@@ -79,6 +80,7 @@ export default function FlashCardList({
                 onToggleBookmark={onToggleBookmark}
                 onShowAnswer={onShowAnswer}
                 showActions={showActions}
+                onDelete={onDelete}
               />
             </ListItem>
           );

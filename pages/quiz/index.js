@@ -4,6 +4,7 @@ import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
 import { useEffect, useState } from "react";
+import useLocalStorageState from "use-local-storage-state";
 
 const PageTitle = styled.h1`
   padding: 0;
@@ -39,8 +40,13 @@ function pickRandomCards(cards, amountOfCards) {
 }
 
 export default function QuizPage() {
-  const [quizCards, setQuizCards] = useState([]);
-  const [currentCard, setCurrentCard] = useState(0);
+  const [quizCards, setQuizCards] = useLocalStorageState("quizcards", {
+    defaultValue: [],
+  });
+  const [currentCard, setCurrentCard] = useLocalStorageState("currentcard", {
+    defaultValue: 0,
+  });
+
   const [hasSeenAnswer, setHasSeenAnswer] = useState(false);
 
   const amountOfCards = 10;

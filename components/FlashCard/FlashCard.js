@@ -122,7 +122,6 @@ export default function FlashCard({
   flashcard,
   onToggleBookmark,
   isBookmarked,
-  id,
   onShowAnswer,
   showActions = true,
   onDelete,
