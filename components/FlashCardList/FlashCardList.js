@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { useState } from "react";
 import FlashCard from "@/components/FlashCard/FlashCard";
 import useSWR from "swr";
+import Link from "next/link";
 import { useRouter } from "next/router";
 
 const List = styled.ul`
@@ -24,16 +25,18 @@ const Message = styled.div`
   color: ${(props) => (props.$type === "success" ? "#155724" : "#721c24")};
 `;
 
-const Button = styled.button`
+const StyledLink = styled(Link)`
   background-color: var(--color-primary);
   border: none;
   border-radius: 30px;
+  display: block;
   cursor: pointer;
   color: var(--text-color-light);
   font-size: 1.2rem;
   height: 60px;
-  padding: 5px 60px;
-  margin: 20px;
+  padding: 15px 60px;
+  margin: 20px 0 20px 0;
+  text-decoration: none;
   &:hover {
     background-color: var(--color-secondary);
   }
@@ -44,7 +47,7 @@ const FeedbackMessage = styled.p`
   color: var(--color-accent);
   padding: 10px 14px;
   border-radius: 20px;
-  margin: 10px 0 6px;
+  margin: 20px 0 20px 0;
   min-width: 300px;
 `;
 
@@ -80,11 +83,9 @@ export default function FlashCardList({
       {flashcards.length === 0 && (
         <>
           <FeedbackMessage role="status">
-            No flashcards yet... add one to start the quiz.
+            No flashcards yet... start to add one.
           </FeedbackMessage>
-          <Button type="button" onClick={() => router.push("/add-card")}>
-            Add a new flashcard
-          </Button>
+          <StyledLink href="/add-card">Add a new flashcard</StyledLink>
         </>
       )}
       <List>
