@@ -1,22 +1,37 @@
 // components/FlashCard/FlashCard.js
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
 import styled from "styled-components";
 import { useFlipHint } from "@/hooks/useFlipHint";
 import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit } from "@fortawesome/free-solid-svg-icons";
+import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import BookmarkButton from "../Bookmarks/bookmarks";
 
-/* Styling */
+/* hexcolor in rgb color umwandeln */
+const hexToRgba = (hex, alpha = 0.7) => {
+  const redHex = hex.slice(1, 3); // extract 12----
+  const greenHex = hex.slice(3, 5); // extract --34--
+  const blueHex = hex.slice(5, 7); // extract ----56
+
+  // Hexadezimal (String) in Binärzahl (number) umwandeln
+  const red = parseInt(redHex, 16);
+  const green = parseInt(greenHex, 16);
+  const blue = parseInt(blueHex, 16);
+
+  return `rgba(${red}, ${green}, ${blue}, ${alpha})`;
+};
+
 const CardFront = styled.article`
-  border: 3px solid ${(props) => props.$color || "var(--color-primary)"};
+  background: ${(props) =>
+    hexToRgba(props.$color, 0.5) || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
-  background: #d1fcff;
   margin-top: 10px;
+  padding: 0 10px 0 10px;
+  min-width: 300px;
 
   &:hover {
     cursor: pointer;
@@ -24,11 +39,13 @@ const CardFront = styled.article`
 `;
 
 const CardBack = styled.article`
-  border: 3px solid ${(props) => props.$color || "var(--color-primary)"};
+  background: ${(props) =>
+    hexToRgba(props.$color, 0.5) || "var(--color-primary)"};
   border-radius: 12px;
   overflow: hidden;
-  background: #d1ffd3;
   margin-top: 10px;
+  padding: 0 10px 0 10px;
+  min-width: 300px;
 
   &:hover {
     cursor: pointer;
@@ -39,42 +56,47 @@ const CardHeader = styled.div`
   display: flex;
 
   justify-content: space-between;
-  background: ${(props) => props.$color || "var(--color-primary)"};
-  padding: 5px 0 5px 10px;
+  padding: 5px 0 0 5px;
 `;
 
 const CollectionTitle = styled.h2`
   color: var(--text-color-light);
+  font-family: var(--font-family);
   font-size: 1rem;
   line-height: 1.2;
 `;
 
 const CardBody = styled.div`
-  padding: 10px;
-  min-height: 120px;
+  padding: 5px 12px 12px 12px;
+  min-height: 200px;
+  background: rgb(255, 255, 255, 0.7);
+  border-radius: 12px;
+  text-align: left;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 `;
 
 const Question = styled.h3`
-  color: #000;
-  font-size: 1rem;
+  display: inline;
+  font-size: 1.2rem;
   line-height: 1.2;
 `;
 
 const Answer = styled.h3`
-  color: var(--text-color-dark);
-  font-size: 1rem;
+  display: inline;
+  font-size: 1.2rem;
   line-height: 1.2;
 `;
 
 const Label = styled.p`
   color: var(--text-color-dark);
-  font-size: 0.7rem;
-  line-height: 0;
+  font-size: 1rem;
+  line-height: 1;
 `;
 
 const StyledLink = styled(Link)`
   gap: 6px;
-  padding: 10px;
+  padding: 10px 5px 10px 10px;
   text-align: center;
   color: #fff;
   text-decoration: none;
@@ -86,19 +108,27 @@ const StyledLink = styled(Link)`
 `;
 
 const Icon = styled(FontAwesomeIcon)`
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
   max-width: none;
   flex: 0 0 auto;
+`;
+
+const Button = styled.button`
+  margin: 10px 0;
 `;
 
 export default function FlashCard({
   flashcard,
   onToggleBookmark,
   isBookmarked,
-  id,
+  onShowAnswer,
+  showActions = true,
+  onDelete,
 }) {
   const [isFlipped, setIsFlipped] = useState(false);
+  const [confirm, setConfirm] = useState(false);
+  const id = flashcard._id;
   const { showHint, markFirstFlip } = useFlipHint();
 
   function flipCard() {
@@ -106,6 +136,23 @@ export default function FlashCard({
     setIsFlipped((prev) => !prev);
   }
 
+  useEffect(() => {
+    if (isFlipped) {
+      onShowAnswer?.();
+    }
+  }, [isFlipped, onShowAnswer]);
+
+  const handleDelete = async (event) => {
+    event.stopPropagation();
+    const response = await fetch(`/api/flashcards/${id}`, {
+      method: "DELETE",
+    });
+    if (response.ok) {
+      onDelete("success");
+    } else {
+      onDelete("error");
+    }
+  };
   return (
     <ReactCardFlip
       flipDirection="horizontal"
@@ -117,18 +164,44 @@ export default function FlashCard({
       <CardFront $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <BookmarkButton
-            id={flashcard._id}
-            isBookmarked={isBookmarked}
-            onToggleBookmark={onToggleBookmark}
-          />
-          <StyledLink
-            href={`/flashcards/${flashcard._id}`}
-            onClick={(e) => e.stopPropagation()}
-            aria-label="Edit flashcard"
-          >
-            <Icon icon={faEdit} aria-hidden="true" />
-          </StyledLink>
+          {showActions && (
+            <>
+              <Button
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setConfirm(!confirm);
+                }}
+              >
+                <Icon icon={faTrash} aria-hidden="true" />
+              </Button>
+              {confirm && (
+                <>
+                  <Label>Are you sure?</Label>
+                  <Button
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setConfirm(false);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
+                </>
+              )}
+              <BookmarkButton
+                id={flashcard._id}
+                isBookmarked={isBookmarked}
+                onToggleBookmark={onToggleBookmark}
+              />
+              <StyledLink
+                href={`/flashcards/${flashcard._id}`}
+                onClick={(e) => e.stopPropagation()}
+                aria-label="Edit flashcard"
+              >
+                <Icon icon={faEdit} aria-hidden="true" />
+              </StyledLink>
+            </>
+          )}
         </CardHeader>
 
         <CardBody>
@@ -143,11 +216,13 @@ export default function FlashCard({
       <CardBack $color={flashcard.color} onClick={flipCard}>
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
-          <BookmarkButton
-            id={flashcard._id}
-            isBookmarked={isBookmarked}
-            onToggleBookmark={onToggleBookmark}
-          />
+          {showActions && (
+            <BookmarkButton
+              id={flashcard._id}
+              isBookmarked={isBookmarked}
+              onToggleBookmark={onToggleBookmark}
+            />
+          )}
         </CardHeader>
 
         <CardBody>

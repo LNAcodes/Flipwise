@@ -3,6 +3,8 @@
 import GlobalStyle from "../styles";
 import { SWRConfig } from "swr";
 import Layout from "@/components/Layout/Layout";
+import { SessionProvider } from "next-auth/react";
+import styled from "styled-components";
 
 const fetcher = async (url) => {
   const res = await fetch(url);
@@ -17,17 +19,28 @@ const fetcher = async (url) => {
 
   return res.json();
 };
+const Wrapper = styled.div`
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+`;
 
-export default function App({ Component, pageProps }) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}) {
   const meta = Component.meta ?? {};
   return (
-    <>
-      <GlobalStyle />
-      <SWRConfig value={{ fetcher }}>
-        <Layout title={meta.title} description={meta.description}>
-          <Component {...pageProps} />
-        </Layout>
-      </SWRConfig>
-    </>
+    <SessionProvider session={session}>
+      <Wrapper>
+        <GlobalStyle />
+        <SWRConfig value={{ fetcher }}>
+          <Layout title={meta.title} description={meta.description}>
+            <Component {...pageProps} />
+          </Layout>
+        </SWRConfig>
+      </Wrapper>
+    </SessionProvider>
   );
 }

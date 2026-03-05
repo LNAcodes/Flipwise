@@ -2,7 +2,7 @@
 
 import Head from "next/head";
 
-export default function MetaHeader({ title, description }) {
+export default function MetaHead({ title, description }) {
   const pageTitle = title ? `FlipWise | ${title}` : "FlipWise";
   const pageDescription = description ?? "Learn with flashcards.";
 
