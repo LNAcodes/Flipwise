@@ -3,31 +3,99 @@ import {
   getRandomQuizCards,
   getCollectionQuizCards,
 } from "@/utils/quizHelpers";
+import styled from "styled-components";
+import { useState } from "react";
 
-/* const Message = styled.h2`
+const Message = styled.h2`
   color: #f10707;
   font-size: 20px;
-`; */
-console.log("Dateitest: QUizSetup wurde geladen!");
+  font-weight: bold;
+`;
+const L2 = styled.h2`
+  color: #ccc;
+  font-size: 32px;
+  font-weight: bold;
+  margin-top: 0;
+`;
+const SetupContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  color: #ccc;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+`;
 
-export default function QuizSetup({ allCards }) {
-  console.log("Alle Karten:", allCards);
-  console.log("Zufall 10:", getRandomQuizCards(allCards));
-  console.log("Collection 'React':", getCollectionQuizCards(allCards, "React"));
+export default function QuizSetup({ allCards, collections, onStart }) {
+  const [quizMode, setQuizMode] = useState("random");
+  const [selectCollection, setSelectCollection] = useState("");
+  const amountOfCards = 10;
 
-  return <div>Setup View (Coming Soon)</div>;
-  /* const quizCards = getRandomQuizCards(allCards);
+  const hasEnoughCards = allCards?.length >= amountOfCards;
 
+  function handleStart() {
+    let cardsToPlay = [];
+
+    if (quizMode === "random") {
+      cardsToPlay = getRandomQuizCards(allCards, amountOfCards);
+    } else {
+      cardsToPlay = getCollectionQuizCards(allCards, selectCollection);
+    }
+    onStart(cardsToPlay);
+  }
   return (
-    <>
-      {!quizCards ? (
+    <SetupContainer>
+      <L2>Quiz Settings</L2>
+      {/*Random Button*/}
+      <label>
+        <input
+          type="radio"
+          name="quizMode"
+          value="random"
+          checked={quizMode === "random"}
+          onChange={() => setQuizMode("random")}
+        />
+        Random {amountOfCards} Cards
+      </label>
+      {/*Collection Button */}
+      <label>
+        <input
+          type="radio"
+          name="quizMode"
+          value="collection"
+          checked={quizMode === "collection"}
+          onChange={() => setQuizMode("collection")}
+        />
+        By Collection
+      </label>
+      {quizMode === "collection" && (
+        <select
+          value={selectCollection}
+          onChange={(event) => setSelectCollection(event.target.value)}
+        >
+          <option value=""> -- Choose a collection --</option>
+          {collections?.map((col) => (
+            <option key={col._id} value={col.name}>
+              {col.name}
+            </option>
+          ))}
+        </select>
+      )}
+      {/* Validierung & Startbutton */}
+      {!hasEnoughCards && quizMode === "random" ? (
         <Message>
-          Not enough cards available. Please add more to create a quiz with at
-          least 10 cards.
+          Not enough cards! You need at least {amountOfCards} cards for a random
+          quiz.
         </Message>
       ) : (
-        <button onClick={handleStart}>Start 10-Card-Quiz</button>
+        <button
+          onClick={handleStart}
+          disabled={quizMode === "collection" && !selectCollection}
+        >
+          Start Quiz
+        </button>
       )}
-    </>
-  ); */
+    </SetupContainer>
+  );
 }

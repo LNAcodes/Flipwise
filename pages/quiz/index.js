@@ -72,7 +72,7 @@ export default function QuizPage() {
   }
 
   function handlePlayAgain() {
-    setCurrentCard(0); // Karten bleiben im State, wir fangen nur vorn an
+    setCurrentCard(0); // Neustart mit gleichen Karten
   }
 
   function handleBackToSetup() {
