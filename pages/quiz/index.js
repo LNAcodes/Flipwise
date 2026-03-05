@@ -15,8 +15,13 @@ const ButtonGroup = styled.div`
   gap: 30px;
 `;
 
-const CorrectAnswerButton = styled.button`
-  background-color: var(--color-correct);
+const Button = styled.button`
+  background-color: ${(props) =>
+    props.$correct
+      ? "var(--color-correct)"
+      : props.$wrong
+        ? "var(--color-wrong)"
+        : "var(--color-primary)"};
   border: none;
   border-radius: 25px;
   cursor: pointer;
@@ -25,24 +30,13 @@ const CorrectAnswerButton = styled.button`
   height: 50px;
   padding: 5px 20px;
   width: 50%;
+  min-width: ${(props) => (props.$restart ? "300px" : "auto")};
+  margin: ${(props) => (props.$restart ? "10px 0 6px" : "0")};
   &:hover {
     background-color: var(--color-secondary);
   }
 `;
-const WrongAnswerButton = styled.button`
-  background-color: var(--color-wrong);
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  color: var(--text-color-light);
-  font-size: 1.2rem;
-  height: 50px;
-  padding: 5px 20px;
-  width: 50%;
-  &:hover {
-    background-color: var(--color-secondary);
-  }
-`;
+
 const RestartButton = styled.button`
   background-color: var(--color-primary);
   border: none;
@@ -223,12 +217,12 @@ export default function QuizPage() {
 
           {hasSeenAnswer && (
             <ButtonGroup>
-              <WrongAnswerButton onClick={() => onHandleAnswer(false)}>
+              <Button $wrong onClick={() => onHandleAnswer(false)}>
                 Wrong
-              </WrongAnswerButton>
-              <CorrectAnswerButton onClick={() => onHandleAnswer(true)}>
+              </Button>
+              <Button $correct onClick={() => onHandleAnswer(true)}>
                 Correct
-              </CorrectAnswerButton>
+              </Button>
             </ButtonGroup>
           )}
         </>
@@ -240,9 +234,9 @@ export default function QuizPage() {
             <ListItem>Correct: {countCorrect}</ListItem>
             <ListItem>Wrong: {countWrong} </ListItem>
           </List>
-          <RestartButton onClick={() => handleQuizRestart()}>
+          <Button $restart onClick={() => handleQuizRestart()}>
             Restart Quiz
-          </RestartButton>
+          </Button>
         </>
       )}
     </>
