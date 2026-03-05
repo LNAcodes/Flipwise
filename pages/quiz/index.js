@@ -3,22 +3,50 @@
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
 const PageTitle = styled.h1`
   padding: 0;
 `;
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 30px;
+`;
+
 const Button = styled.button`
-  background-color: var(--color-primary);
+  background-color: ${(props) =>
+    props.$correct
+      ? "var(--color-correct)"
+      : props.$wrong
+        ? "var(--color-wrong)"
+        : "var(--color-primary)"};
   border: none;
-  border-radius: 30px;
+  border-radius: 25px;
   cursor: pointer;
   color: var(--text-color-light);
   font-size: 1.2rem;
-  height: 60px;
-  padding: 5px 60px;
+  height: 50px;
+  padding: 5px 20px;
+  width: 50%;
+  min-width: ${(props) => (props.$restart ? "300px" : "auto")};
+  margin: ${(props) => (props.$restart ? "10px 0 6px" : "0")};
+  &:hover {
+    background-color: var(--color-secondary);
+  }
+`;
+
+const RestartButton = styled.button`
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 50px;
+  padding: 5px 20px;
+  width: 50%;
   &:hover {
     background-color: var(--color-secondary);
   }
@@ -31,6 +59,35 @@ const FeedbackMessage = styled.p`
   border-radius: 20px;
   margin: 10px 0 6px;
   min-width: 300px;
+`;
+const List = styled.ul`
+  list-style: none;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--color-border);
+  padding: 20px;
+  border-radius: 20px;
+  margin: 20px 0 20px 0;
+  line-height: 2;
+  min-width: 300px;
+`;
+const ListItem = styled.li`
+  text-align: left;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--color-border);
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin: 10px 0 10px 0;
+  &:nth-child(2) {
+    border: 1px solid var(--color-correct);
+    color: var(--color-correct);
+  }
+  &:nth-child(3) {
+    border: 1px solid var(--color-wrong);
+    color: var(--color-wrong);
+  }
 `;
 
 // ZUFÄLLIGE QUIZ CARDS ZUSAMMENSTELLEN
@@ -45,6 +102,12 @@ export default function QuizPage() {
     defaultValue: [],
   });
   const [currentCard, setCurrentCard] = useLocalStorageState("currentcard", {
+    defaultValue: 0,
+  });
+  const [countCorrect, setCountCorrect] = useLocalStorageState("countcorrect", {
+    defaultValue: 0,
+  });
+  const [countWrong, setCountWrong] = useLocalStorageState("countwrong", {
     defaultValue: 0,
   });
 
@@ -73,8 +136,19 @@ export default function QuizPage() {
     };
   });
 
+  function onHandleAnswer(isCorrect) {
+    if (isCorrect) {
+      setCountCorrect((i) => i + 1);
+    } else {
+      setCountWrong((i) => i + 1);
+    }
+    setCurrentCard((i) => i + 1);
+  }
+
   function handleQuizRestart() {
     setCurrentCard(0);
+    setCountCorrect(0);
+    setCountWrong(0);
     setQuizCards([]);
   }
 
@@ -132,7 +206,8 @@ export default function QuizPage() {
       {currentCard < quizCards.length ? (
         <>
           <FeedbackMessage>
-            {currentCard + 1}/{quizCards.length}
+            {currentCard + 1}/{quizCards.length} | Correct: {countCorrect} |
+            Wrong {countWrong}
           </FeedbackMessage>
           <FlashCardList
             flashcards={[quizCards[currentCard]]}
@@ -141,17 +216,27 @@ export default function QuizPage() {
           />
 
           {hasSeenAnswer && (
-            <Button onClick={() => setCurrentCard((i) => i + 1)}>
-              Next Card
-            </Button>
+            <ButtonGroup>
+              <Button $wrong onClick={() => onHandleAnswer(false)}>
+                Wrong
+              </Button>
+              <Button $correct onClick={() => onHandleAnswer(true)}>
+                Correct
+              </Button>
+            </ButtonGroup>
           )}
         </>
       ) : (
         <>
-          <FeedbackMessage>
-            All {quizCards.length} cards have been viewed.
-          </FeedbackMessage>
-          <Button onClick={() => handleQuizRestart()}>Restart Quiz</Button>
+          <FeedbackMessage>Quiz finished.</FeedbackMessage>
+          <List>
+            <ListItem>Answered cards: {quizCards.length}</ListItem>
+            <ListItem>Correct: {countCorrect}</ListItem>
+            <ListItem>Wrong: {countWrong} </ListItem>
+          </List>
+          <Button $restart onClick={() => handleQuizRestart()}>
+            Restart Quiz
+          </Button>
         </>
       )}
     </>
