@@ -66,11 +66,34 @@ const FeedbackMessage = styled.p`
   margin: 10px 0 6px;
   min-width: 300px;
 `;
-const StatsCorrect = styled.span`
-  color: var(--color-correct);
+const List = styled.ul`
+  list-style: none;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--color-border);
+  padding: 20px;
+  border-radius: 20px;
+  margin: 20px 0 20px 0;
+  line-height: 2;
+  min-width: 300px;
 `;
-const StatsWrong = styled.span`
-  color: var(--color-wrong);
+const ListItem = styled.li`
+  text-align: left;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid var(--color-border);
+  padding: 10px 20px;
+  border-radius: 20px;
+  margin: 10px 0 10px 0;
+  &:nth-child(2) {
+    border: 1px solid var(--color-correct);
+    color: var(--color-correct);
+  }
+  &:nth-child(3) {
+    border: 1px solid var(--color-wrong);
+    color: var(--color-wrong);
+  }
 `;
 
 // ZUFÄLLIGE QUIZ CARDS ZUSAMMENSTELLEN
@@ -212,15 +235,11 @@ export default function QuizPage() {
       ) : (
         <>
           <FeedbackMessage>Quiz finished.</FeedbackMessage>
-          <ul>
-            <li>Answered cards: {quizCards.length}.</li>
-            <li>
-              <StatsCorrect>Correct: {countCorrect}</StatsCorrect>{" "}
-            </li>
-            <li>
-              <StatsWrong>Wrong: {countWrong}</StatsWrong>
-            </li>
-          </ul>
+          <List>
+            <ListItem>Answered cards: {quizCards.length}</ListItem>
+            <ListItem>Correct: {countCorrect}</ListItem>
+            <ListItem>Wrong: {countWrong} </ListItem>
+          </List>
           <RestartButton onClick={() => handleQuizRestart()}>
             Restart Quiz
           </RestartButton>
