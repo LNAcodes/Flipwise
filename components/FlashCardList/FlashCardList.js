@@ -80,7 +80,7 @@ export default function FlashCardList({
                 onToggleBookmark={onToggleBookmark}
                 onShowAnswer={onShowAnswer}
                 showActions={showActions}
-                onDelete={onDelete}
+                onDelete={onDelete ?? handleDeleteResult}
               />
             </ListItem>
           );
