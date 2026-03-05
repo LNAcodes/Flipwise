@@ -2,9 +2,9 @@
 
 import styled from "styled-components";
 import { useState } from "react";
-import Link from "next/link";
 import FlashCard from "@/components/FlashCard/FlashCard";
 import useSWR from "swr";
+import { useRouter } from "next/router";
 
 const List = styled.ul`
   margin: 0;
@@ -24,15 +24,28 @@ const Message = styled.div`
   color: ${(props) => (props.$type === "success" ? "#155724" : "#721c24")};
 `;
 
-const EmptyState = styled.p`
-  text-align: center;
-  margin-top: 20px;
+const Button = styled.button`
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 60px;
+  padding: 5px 60px;
+  margin: 20px;
+  &:hover {
+    background-color: var(--color-secondary);
+  }
 `;
-
-const EmptyStateLink = styled(Link)`
-  display: block;
-  text-align: center;
-  margin-top: 10px;
+const FeedbackMessage = styled.p`
+  background: rgba(0, 200, 120, 0.5);
+  border: 1px solid var(--color-border);
+  color: var(--color-accent);
+  padding: 10px 14px;
+  border-radius: 20px;
+  margin: 10px 0 6px;
+  min-width: 300px;
 `;
 
 export default function FlashCardList({
@@ -45,6 +58,7 @@ export default function FlashCardList({
 }) {
   const { mutate } = useSWR("/api/flashcards");
   const [message, setMessage] = useState(null);
+  const router = useRouter();
 
   function handleDeleteResult(status) {
     if (status === "success") {
@@ -65,8 +79,12 @@ export default function FlashCardList({
       {message && <Message $type={message.type}>{message.text}</Message>}
       {flashcards.length === 0 && (
         <>
-          <EmptyState>There are no flashcards yet.</EmptyState>
-          <EmptyStateLink href="/add-card">Add a new flashcard</EmptyStateLink>
+          <FeedbackMessage role="status">
+            No flashcards yet... add one to start the quiz.
+          </FeedbackMessage>
+          <Button type="button" onClick={() => router.push("/add-card")}>
+            Add a new flashcard
+          </Button>
         </>
       )}
       <List>

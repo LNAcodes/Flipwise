@@ -3,6 +3,7 @@
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
