@@ -3,22 +3,42 @@
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
 const PageTitle = styled.h1`
   padding: 0;
 `;
-const Button = styled.button`
-  background-color: var(--color-primary);
+
+const ButtonGroup = styled.div`
+  display: flex;
+  gap: 30px;
+`;
+
+const CorrectAnswerButton = styled.button`
+  background-color: var(--color-correct);
   border: none;
-  border-radius: 30px;
+  border-radius: 25px;
   cursor: pointer;
   color: var(--text-color-light);
   font-size: 1.2rem;
-  height: 60px;
-  padding: 5px 60px;
+  height: 50px;
+  padding: 5px 20px;
+  width: 50%;
+  &:hover {
+    background-color: var(--color-secondary);
+  }
+`;
+const WrongAnswerButton = styled.button`
+  background-color: var(--color-wrong);
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 50px;
+  padding: 5px 20px;
+  width: 50%;
   &:hover {
     background-color: var(--color-secondary);
   }
@@ -141,9 +161,14 @@ export default function QuizPage() {
           />
 
           {hasSeenAnswer && (
-            <Button onClick={() => setCurrentCard((i) => i + 1)}>
-              Next Card
-            </Button>
+            <ButtonGroup>
+              <WrongAnswerButton onClick={() => setCurrentCard((i) => i + 1)}>
+                Wrong
+              </WrongAnswerButton>
+              <CorrectAnswerButton onClick={() => setCurrentCard((i) => i + 1)}>
+                Correct
+              </CorrectAnswerButton>
+            </ButtonGroup>
           )}
         </>
       ) : (

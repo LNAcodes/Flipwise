@@ -6,6 +6,8 @@ export default createGlobalStyle`
     --color-primary: #3366ff;
     --color-secondary: #728994;
     --color-accent: #00ff00;
+    --color-correct: rgb(0, 150, 0);
+    --color-wrong: rgb(255, 0, 0);
     --nav-active: #ffffff;
     --nav-inactive: #ccc;
     --color-border: #456778;
