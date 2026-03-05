@@ -3,7 +3,7 @@
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
-import { useEffect, useState, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
 const PageTitle = styled.h1`
@@ -34,20 +34,6 @@ const Button = styled.button`
     background-color: var(--color-secondary);
   }
 `;
-const RestartButton = styled.button`
-  background-color: var(--color-primary);
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  color: var(--text-color-light);
-  font-size: 1.2rem;
-  height: 50px;
-  padding: 5px 20px;
-  width: 50%;
-  &:hover {
-    background-color: var(--color-secondary);
-  }
-`;
 const FeedbackMessage = styled.p`
   background: rgba(0, 200, 120, 0.5);
   border: 1px solid var(--color-border);
@@ -66,7 +52,7 @@ const HeadUpDisplay = styled.p`
   color: var(--text-color-dark);
   padding: 10px 14px;
   border-radius: 20px;
-  margin: 10px 0 6px;
+  margin: 20px 0 20px 0;
   min-width: 300px;
 `;
 const List = styled.ul`
@@ -122,11 +108,12 @@ export default function QuizPage() {
 
   const [hasSeenAnswer, setHasSeenAnswer] = useState(false);
 
-  const [session, setSession] = useState({
-    defaultValue: { status: "idle", startedAt: null, finishedAt: null },
-    defaultServerValue: { status: "idle", startedAt: null, finishedAt: null },
+  const defaultSession = { status: "idle", startedAt: null, finishedAt: null };
+
+  const [session, setSession] = useLocalStorageState("quizSession", {
+    defaultValue: defaultSession,
+    defaultServerValue: defaultSession,
   });
-  console.log(session);
 
   // verstrichene Zeit in Millisekunden
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -162,21 +149,32 @@ export default function QuizPage() {
     };
   });
 
-  function startQuiz() {
-    setSession({
-      status: "running",
-      startedAt: new Date().toISOString(),
-      finishedAt: null,
+  const startQuiz = useCallback(() => {
+    setSession((session) => {
+      // wenn gestartet und nicht fertig -> status auf running setzen
+      if (session?.startedAt && !session.finishedAt) {
+        return { ...session, status: "running" };
+      }
+      // sonst neu Starte
+      return {
+        status: "running",
+        startedAt: new Date().toISOString(),
+        finishedAt: null,
+      };
     });
-  }
+  }, [setSession]);
 
-  function finishQuiz() {
-    setSession((s) => ({
-      ...s,
-      status: "finished",
-      finishedAt: new Date().toISOString(),
-    }));
-  }
+  const finishQuiz = useCallback(() => {
+    setSession((session) => {
+      // wenn nicht gestartet oder fertig -> status auf finnished setzen
+      if (!session?.startedAt || session.finishedAt) return session;
+      return {
+        ...session,
+        status: "finished",
+        finishedAt: new Date().toISOString(),
+      };
+    });
+  }, [setSession]);
 
   function onHandleAnswer(isCorrect) {
     if (isCorrect) {
@@ -192,6 +190,9 @@ export default function QuizPage() {
     setCountCorrect(0);
     setCountWrong(0);
     setQuizCards([]);
+    startQuiz();
+    setElapsedTime(0);
+    setSession(defaultSession);
     startQuiz();
   }
 
@@ -223,7 +224,17 @@ export default function QuizPage() {
   }, [currentCard, quizCards.length, session.status, finishQuiz]);
 
   useEffect(() => {
-    if (session.status !== "running" || !session.startedAt) return;
+    if (!session?.startedAt) return;
+
+    // falls finishedAt gesetzt: finalen Wert einmal berechnen
+    if (session.finishedAt) {
+      setElapsedTime(
+        Date.parse(session.finishedAt) - Date.parse(session.startedAt)
+      );
+      return;
+    }
+
+    // läuft (auch nach Navigation zurück, weil startedAt persisted ist)
     if (intervalRef.current) clearInterval(intervalRef.current);
 
     intervalRef.current = setInterval(() => {
@@ -235,8 +246,7 @@ export default function QuizPage() {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     };
-  }, [session.status, session.startedAt, setElapsedTime]);
-  console.log("Elapsed Time: ", elapsedTime);
+  }, [session?.startedAt, session?.finishedAt]);
 
   useEffect(() => {
     setHasSeenAnswer(false);
