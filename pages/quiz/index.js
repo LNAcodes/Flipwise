@@ -45,13 +45,12 @@ const FeedbackMessage = styled.p`
 `;
 const HeadUpDisplay = styled.p`
   font-size: 13px;
-  font-weight: 400;
+  font-weight: 300;
   text-align: left;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid var(--color-border);
-  color: var(--text-color-dark);
-  padding: 10px 14px;
-  border-radius: 20px;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(0, 255, 94, 0.8);
+  padding: 10px 10px 10px 20px;
+  border-radius: 15px;
   margin: 20px 0 20px 0;
   min-width: 300px;
 `;
@@ -108,8 +107,8 @@ export default function QuizPage() {
 
   const [hasSeenAnswer, setHasSeenAnswer] = useState(false);
 
+  // session states
   const defaultSession = { status: "idle", startedAt: null, finishedAt: null };
-
   const [session, setSession] = useLocalStorageState("quizSession", {
     defaultValue: defaultSession,
     defaultServerValue: defaultSession,
@@ -120,25 +119,31 @@ export default function QuizPage() {
 
   const intervalRef = useRef(null);
 
+  // Zeitformat
   const formatSeconds = (ms) =>
     new Intl.NumberFormat("de-DE", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(ms / 1000);
 
+  // Anzahl initialer Quiz Cards festlegen
   const amountOfCards = 10;
 
+  // cards über API laden (SWR > cached die daten)
   const {
     data: flashcards,
     error: cardsError,
     isLoading: cardsLoading,
   } = useSWR("/api/flashcards");
+
+  // collections über API laden (SWR > cached die daten)
   const {
     data: collections,
     error: collectionsError,
     isLoading: colectionsLoading,
   } = useSWR("/api/collections");
 
+  // cards mit collection-color anreichern
   const enrichedFlashcards = (flashcards ?? []).map((card) => {
     const matchingCollection = (collections ?? []).find(
       (col) => col.name === card.collection
@@ -149,13 +154,14 @@ export default function QuizPage() {
     };
   });
 
+  // Quiz starten
   const startQuiz = useCallback(() => {
     setSession((session) => {
-      // wenn gestartet und nicht fertig -> status auf running setzen
+      // wenn gestartet und nicht fertig -> status auf 'running' setzen
       if (session?.startedAt && !session.finishedAt) {
         return { ...session, status: "running" };
       }
-      // sonst neu Starte
+      // sonst neu starten
       return {
         status: "running",
         startedAt: new Date().toISOString(),
@@ -164,9 +170,10 @@ export default function QuizPage() {
     });
   }, [setSession]);
 
+  // Quiz beenden
   const finishQuiz = useCallback(() => {
     setSession((session) => {
-      // wenn nicht gestartet oder fertig -> status auf finnished setzen
+      // wenn noch nicht gestartet oder schon beendet → nichts ändern
       if (!session?.startedAt || session.finishedAt) return session;
       return {
         ...session,
@@ -176,6 +183,7 @@ export default function QuizPage() {
     });
   }, [setSession]);
 
+  //  richtige/falsche Antworten zählen und nächste Card laden
   function onHandleAnswer(isCorrect) {
     if (isCorrect) {
       setCountCorrect((i) => i + 1);
@@ -185,17 +193,18 @@ export default function QuizPage() {
     setCurrentCard((i) => i + 1);
   }
 
+  // alles zurücksetzen und Quiz neustarten
   function handleQuizRestart() {
     setCurrentCard(0);
     setCountCorrect(0);
     setCountWrong(0);
     setQuizCards([]);
-    startQuiz();
     setElapsedTime(0);
     setSession(defaultSession);
     startQuiz();
   }
 
+  // random cards holen, index auf 0 setzen und Quiz starten
   useEffect(() => {
     if (!flashcards?.length) return;
     if (!collections?.length) return;
@@ -215,18 +224,20 @@ export default function QuizPage() {
     startQuiz,
   ]);
 
+  // Quiz beenden, außer wenn ...
   useEffect(() => {
-    if (session.status !== "running") return;
-    if (quizCards.length === 0) return;
-    if (currentCard < quizCards.length) return;
+    if (session.status !== "running") return; // ... quiz nicht mehr läuft
+    if (quizCards.length === 0) return; // ... es keine cards gibt
+    if (currentCard < quizCards.length) return; // ... noch Karten übrig sind
 
     finishQuiz();
   }, [currentCard, quizCards.length, session.status, finishQuiz]);
 
+  // Timer starten, vergangene Zeit berechnenen und als state speichern
   useEffect(() => {
     if (!session?.startedAt) return;
 
-    // falls finishedAt gesetzt: finalen Wert einmal berechnen
+    // wenn finishedAt gesetzt: finalen Wert berechnen (einmal)
     if (session.finishedAt) {
       setElapsedTime(
         Date.parse(session.finishedAt) - Date.parse(session.startedAt)
@@ -237,10 +248,11 @@ export default function QuizPage() {
     // läuft (auch nach Navigation zurück, weil startedAt persisted ist)
     if (intervalRef.current) clearInterval(intervalRef.current);
 
+    // Timer starten und alle 100 ms die Callback-Funktion ausführen
     intervalRef.current = setInterval(() => {
-      const startMs = Date.parse(session.startedAt);
-      setElapsedTime(Date.now() - startMs);
-    }, 250);
+      const startMs = Date.parse(session.startedAt); // gespeicherten Startzeitpunkt Zahl umwandeln (ISO to Ms)
+      setElapsedTime(Date.now() - startMs); // berechne verstrichene Zeit seit startedAt in Ms und als state speichern
+    }, 100);
 
     return () => {
       clearInterval(intervalRef.current);
@@ -248,6 +260,7 @@ export default function QuizPage() {
     };
   }, [session?.startedAt, session?.finishedAt]);
 
+  // beim card-wechsel: antwort-status zurücksetzen (buttons erst nach ‘show answer’ einblenden)
   useEffect(() => {
     setHasSeenAnswer(false);
   }, [currentCard]);
@@ -287,9 +300,9 @@ export default function QuizPage() {
       {currentCard < quizCards.length ? (
         <>
           <HeadUpDisplay>
-            Correct: {countCorrect} | Wrong {countWrong} | Time:{" "}
-            {formatSeconds(elapsedTime)}s | Card: {currentCard + 1}/
-            {quizCards.length}
+            Correct: {countCorrect} | Wrong: {countWrong} | Card:{" "}
+            {currentCard + 1}/{quizCards.length} | Time:{" "}
+            {formatSeconds(elapsedTime)}s
           </HeadUpDisplay>
           <FlashCardList
             flashcards={[quizCards[currentCard]]}
