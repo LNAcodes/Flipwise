@@ -35,9 +35,10 @@ export default function QuizSetup({ allCards, collections, onStart }) {
   const hasEnoughCards = allCards?.length >= amountOfCards;
 
   function handleStart() {
-    const cardsToPlay = quizMode === "random" 
-          ? getRandomQuizCards(allCards, amountOfCards) 
-          :  getCollectionQuizCards(allCards, selectCollection)
+    let cardsToPlay =
+      quizMode === "random"
+        ? getRandomQuizCards(allCards, amountOfCards)
+        : getCollectionQuizCards(allCards, selectCollection);
 
     if (quizMode === "random") {
       cardsToPlay = getRandomQuizCards(allCards, amountOfCards);
