@@ -2,7 +2,7 @@
 
 import dbConnect from "@/db/connect";
 import Flashcard from "@/db/models/Flashcard";
-import { authOptions } from "../auth/[...nextauth]";
+import { authOptions } from "@/auth/[...nextauth]";
 import { getServerSession } from "next-auth";
 import { getToken } from "next-auth/jwt";
 
