@@ -78,7 +78,7 @@ export default function Navbar() {
   return (
     <NavBar aria-label="Primary">
       <List>
-        {/* <Item>
+        <Item>
           <StyledLink
             href="/"
             aria-label="Go to startpage"
@@ -87,7 +87,7 @@ export default function Navbar() {
             <Icon icon={faHome} aria-hidden="true" />
             <LinkText>Home</LinkText>
           </StyledLink>
-        </Item> */}
+        </Item>
 
         <Item>
           <StyledLink

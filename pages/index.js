@@ -9,12 +9,12 @@ const PageTitle = styled.h1`
 export default function HomePage() {
   return (
     <>
-      <PageTitle>Home (Dashbord)</PageTitle>
+      <PageTitle>Welcome to FlipWise</PageTitle>
     </>
   );
 }
 
 HomePage.meta = {
-  title: "Home (Dashboard)",
-  description: "Dashboard and overview.",
+  title: "Home",
+  description: "Your Dashboard and overview.",
 };
