@@ -42,6 +42,11 @@ export default function QuizSetup({ allCards, collections, onStart }) {
     } else {
       cardsToPlay = getCollectionQuizCards(allCards, selectCollection);
     }
+    //Sicherheitscheck, falls Karten/collections während des Quizes gelöscht werden(aktuell mgl.)
+    if (cardsToPlay.length === 0) {
+      alert("This Collection is empty! Please Choose another one.");
+      return; // Abbruch, bevor onStart aufgerufen wird.
+    }
     onStart(cardsToPlay);
   }
   return (

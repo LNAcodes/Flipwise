@@ -90,56 +90,66 @@ export default function QuizPage() {
     return <FeedbackMessage>Loading data...</FeedbackMessage>;
 
   // Die Weiche der Anzeige
+
+  // 1. Logik-Bereich der Prüfung des QuizStatus
+  let quizState = "setup"; // Standardmäßig sind wir im Setup
+  // Bei nicht vorhandenen Karten (Quiz zurückgesetzt) zeige Setup
+  if (quizCards.length === 0) {
+    quizState = "setup";
+    // während des Quizes, QuizKarten sind vorhanden, Quiz aktiv
+  } else if (currentCard < quizCards.length) {
+    quizState = "active";
+    // wenn alles andere nicht zutrifft, ist Quiz finished (gleichzusetzen mit currentCard=Gesamtlänge Quiz)
+  } else {
+    quizState = "finished";
+  }
+
   return (
     <>
       <PageTitle>Quiz</PageTitle>
 
-      {/* Wenn noch keine Quiz-Karten gewählt wurden, zeige Setup */}
-      {quizCards.length === 0 ? (
+      {/* ZUSTAND 1: SETUP - Nur wenn keine Karten gewählt sind */}
+      {quizState === "setup" && (
         <QuizSetup
           allCards={enrichedFlashcards}
           collections={collections}
           onStart={handleStartQuiz}
         />
-      ) : (
-        /* Ansonsten zeige Quiz-Interface */
+      )}
+
+      {/* ZUSTAND 2: ACTIVE - Während das Quiz läuft */}
+      {quizState === "active" && (
         <>
-          {currentCard < quizCards.length ? (
-            <>
-              <FeedbackMessage>
-                {currentCard + 1} / {quizCards.length}
-              </FeedbackMessage>
-              <FlashCardList
-                flashcards={[quizCards[currentCard]]}
-                onShowAnswer={() => setHasSeenAnswer(true)}
-                showActions={false}
-              />
-              {hasSeenAnswer && (
-                <Button onClick={() => setCurrentCard((i) => i + 1)}>
-                  Next Card
-                </Button>
-              )}
-            </>
-          ) : (
-            <>
-              <FeedbackMessage>
-                All {quizCards.length} cards have been viewed.
-              </FeedbackMessage>
-
-              {/* Option 1: Gleiche Karten nochmal */}
-              <Button
-                onClick={handlePlayAgain}
-                style={{ marginBottom: "10px" }}
-              >
-                Play Again (Same Cards)
-              </Button>
-
-              {/* Option 2: Zurück zum Setup */}
-              <Button onClick={handleBackToSetup} $variant="secondary">
-                New Quiz / Change Setup
-              </Button>
-            </>
+          <FeedbackMessage>
+            {currentCard + 1} / {quizCards.length}
+          </FeedbackMessage>
+          <FlashCardList
+            flashcards={[quizCards[currentCard]]}
+            onShowAnswer={() => setHasSeenAnswer(true)}
+            showActions={false}
+          />
+          {hasSeenAnswer && (
+            <Button onClick={() => setCurrentCard((i) => i + 1)}>
+              Next Card
+            </Button>
           )}
+        </>
+      )}
+
+      {/* ZUSTAND 3: FINISHED - Wenn alle Karten durch sind */}
+      {quizState === "finished" && (
+        <>
+          <FeedbackMessage>
+            All {quizCards.length} cards have been viewed.
+          </FeedbackMessage>
+
+          <Button onClick={handlePlayAgain} style={{ marginBottom: "10px" }}>
+            Play Again (Same Cards)
+          </Button>
+
+          <Button onClick={handleBackToSetup} $variant="secondary">
+            New Quiz / Change Setup
+          </Button>
         </>
       )}
     </>
