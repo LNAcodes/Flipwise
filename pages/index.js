@@ -1,17 +1,36 @@
 // pages/index.js
 
 import styled from "styled-components";
+import { useSession } from "next-auth/react";
 
 const PageTitle = styled.h1`
   padding: 0;
 `;
+const Username = styled.span`
+  color: greenyellow;
+  font-style: italic;
+`;
+const AppName = styled.span`
+  color: greenyellow;
+  font-style: italic;
+`;
 
 export default function HomePage() {
-  return (
-    <>
-      <PageTitle>Welcome to FlipWise</PageTitle>
-    </>
-  );
+  const { data: session } = useSession();
+
+  if (session) {
+    return (
+      <PageTitle>
+        Welcome <Username>{session.user.name}</Username>
+      </PageTitle>
+    );
+  } else {
+    return (
+      <PageTitle>
+        Welcome to <AppName>FlipWise</AppName>
+      </PageTitle>
+    );
+  }
 }
 
 HomePage.meta = {

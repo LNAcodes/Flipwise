@@ -9,7 +9,7 @@ const Footer = styled.div`
 `;
 
 const Hint = styled.p`
-  color: var(--text-color-dark);
+  color: var(--text-color-light);
   font-size: 0.9rem;
   line-height: 0;
 `;

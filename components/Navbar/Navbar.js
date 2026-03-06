@@ -9,7 +9,6 @@ import {
   faListUl,
   faPlusCircle,
   faPlay,
-  faBookmark,
   faUser,
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
