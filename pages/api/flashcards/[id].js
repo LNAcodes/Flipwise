@@ -3,7 +3,7 @@
 import dbConnect from "@/db/connect";
 import Flashcard from "@/db/models/Flashcard";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/auth/[...nextauth]";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import { getToken } from "next-auth/jwt";
 
 export default async function handler(request, result) {

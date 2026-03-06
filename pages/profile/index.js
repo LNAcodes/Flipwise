@@ -6,6 +6,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import Link from "next/link";
 
 const ProfileTitle = styled.h2`
   color: white;
@@ -26,6 +27,18 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
+`;
+
+const AddCardButton = styled.button`
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 30px;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 60px;
+  padding: 15px;
+  padding-right: 40px;
+  margin: 10px 0;
 `;
 
 const ProfilePicturePlaceholder = styled.div`
@@ -63,6 +76,9 @@ export default function ProfilePage() {
         <Text>
           You are logged in now. You can add and manage your own flashcards.
         </Text>
+        <Link href="/add-card">
+          <AddCardButton>Add new Cards</AddCardButton>
+        </Link>
         <Button
           onClick={async () => {
             await signOut({ redirect: false });
