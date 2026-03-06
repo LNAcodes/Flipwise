@@ -2,14 +2,23 @@
 
 import dbConnect from "@/db/connect";
 import Flashcard from "@/db/models/Flashcard";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]";
+import { getToken } from "next-auth/jwt";
 
 export default async function handler(request, result) {
   await dbConnect();
 
   const { id } = request.query;
+  const session = await getServerSession(request, response, authOptions);
+  const token = await getToken({ req: request });
+  const userId = token?.sub;
 
   if (request.method === "GET") {
     try {
+      if (!session) {
+      }
+      return response.status(401).json;
       const flashcard = await Flashcard.findById(id);
       if (!flashcard) return result.status(404).json({ message: "Not found" });
       return result.status(200).json(flashcard);
