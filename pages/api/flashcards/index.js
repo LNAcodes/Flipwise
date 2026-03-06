@@ -16,17 +16,11 @@ export default async function handler(request, response) {
   switch (request.method) {
     case "GET": {
       try {
-        if (session) {
-          const flashcards = await Flashcard.find({ userId }).sort({
-            createdAt: -1,
-          });
-          return response.status(200).json(flashcards);
-        } else {
-          const flashcards = await Flashcard.find({ userId: "default" }).sort({
-            createdAt: -1,
-          });
-          return response.status(200).json(flashcards);
-        }
+        const user = session ? userId : "default";
+        const flashcards = await Flashcard.find({ userId: user }).sort({
+          createdAt: -1,
+        });
+        return response.status(200).json(flashcards);
       } catch (error) {
         return response.status(500).json({ message: error.message });
       }
