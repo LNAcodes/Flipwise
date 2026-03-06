@@ -13,7 +13,8 @@ const Button = styled.button`
 
   font-size: 30px;
   //Test here: marked = black, unmarked = white
-  color: ${({ $isBookmarked }) => ($isBookmarked ? "#000" : "#fff")};
+  color: ${({ $isBookmarked }) =>
+    $isBookmarked ? "var(--color-accent)" : "#fff"};
 
   &:hover {
     transform: scale(1.2);

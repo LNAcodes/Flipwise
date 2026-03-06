@@ -115,19 +115,32 @@ const EditIcon = styled(FontAwesomeIcon)`
   flex: 0 0 auto;
 `;
 const TrashIcon = styled(FontAwesomeIcon)`
-  width: 20px;
-  height: 20px;
+  width: 25px;
+  height: 25px;
   color: red;
   max-width: none;
-  flex: 0 0 auto;
 `;
 
 const Button = styled.button`
+  background-color: transparent;
+  border: none;
+`;
+const ReallyText = styled.p`
+  background-color: transparent;
+  border: none;
+  color: var(--color-accent);
+`;
+const CancelButton = styled.button`
   margin: 10px 0;
+  background-color: transparent;
+  padding: 0;
+  font-size: 20px;
 `;
 const ConfirmButton = styled.button`
   margin: 10px 0;
-  background-color: red;
+  background-color: transparent;
+  font-size: 20px;
+  padding: 0;
 `;
 
 export default function FlashCard({
@@ -188,18 +201,17 @@ export default function FlashCard({
               </Button>
               {confirm && (
                 <>
-                  <Label>Are you sure?</Label>
-                  <Button
+                  <ReallyText arila-label="Really?">Really?</ReallyText>
+                  <CancelButton
                     onClick={(event) => {
                       event.stopPropagation();
                       setConfirm(false);
                     }}
+                    arial-label="Cancel"
                   >
-                    Cancel
-                  </Button>
-                  <ConfirmButton onClick={handleDelete}>
-                    Yes, delete Flashcard
-                  </ConfirmButton>
+                    ❌
+                  </CancelButton>
+                  <ConfirmButton onClick={handleDelete}>✅</ConfirmButton>
                 </>
               )}
 
@@ -214,6 +226,7 @@ export default function FlashCard({
                 id={flashcard._id}
                 isBookmarked={isBookmarked}
                 onToggleBookmark={onToggleBookmark}
+                aria-label="Bookmark Button"
               />
             </HeaderStyling>
           )}
