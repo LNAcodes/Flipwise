@@ -21,13 +21,15 @@ export default function HomePage() {
   if (session) {
     return (
       <PageTitle>
-        Welcome <Username>{session.user.name}</Username>
-      </PageTitle>
-    );
-  } else {
-    return (
-      <PageTitle>
-        Welcome to <AppName>FlipWise</AppName>
+        {session ? (
+          <>
+            Welcome <Username>{session.user.name}</Username>
+          </>
+        ) : (
+          <>
+            Welcome to <AppName>FlipWise</AppName>
+          </>
+        )}
       </PageTitle>
     );
   }
