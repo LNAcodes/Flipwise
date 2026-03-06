@@ -52,13 +52,6 @@ const CardBack = styled.article`
   }
 `;
 
-const CardHeader = styled.div`
-  display: flex;
-
-  justify-content: space-between;
-  padding: 5px 0 0 5px;
-`;
-
 const CollectionTitle = styled.h2`
   color: var(--text-color-light);
   font-family: var(--font-family);
@@ -93,7 +86,15 @@ const Label = styled.p`
   font-size: 1rem;
   line-height: 1;
 `;
-
+const CardHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0 0 5px;
+`;
+const HeaderStyling = styled.div`
+  display: flex;
+  gap: 6px;
+`;
 const StyledLink = styled(Link)`
   gap: 6px;
   padding: 10px 5px 10px 10px;
@@ -107,15 +108,26 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const Icon = styled(FontAwesomeIcon)`
-  width: 15px;
-  height: 15px;
+const EditIcon = styled(FontAwesomeIcon)`
+  width: 30px;
+  height: 30px;
+  max-width: none;
+  flex: 0 0 auto;
+`;
+const TrashIcon = styled(FontAwesomeIcon)`
+  width: 20px;
+  height: 20px;
+  color: red;
   max-width: none;
   flex: 0 0 auto;
 `;
 
 const Button = styled.button`
   margin: 10px 0;
+`;
+const ConfirmButton = styled.button`
+  margin: 10px 0;
+  background-color: red;
 `;
 
 export default function FlashCard({
@@ -165,14 +177,14 @@ export default function FlashCard({
         <CardHeader $color={flashcard.color}>
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
           {showActions && (
-            <>
+            <HeaderStyling>
               <Button
                 onClick={(event) => {
                   event.stopPropagation();
                   setConfirm(!confirm);
                 }}
               >
-                <Icon icon={faTrash} aria-hidden="true" />
+                <TrashIcon icon={faTrash} aria-hidden="true" />
               </Button>
               {confirm && (
                 <>
@@ -185,22 +197,25 @@ export default function FlashCard({
                   >
                     Cancel
                   </Button>
-                  <Button onClick={handleDelete}>Yes, delete Flashcard</Button>
+                  <ConfirmButton onClick={handleDelete}>
+                    Yes, delete Flashcard
+                  </ConfirmButton>
                 </>
               )}
-              <BookmarkButton
-                id={flashcard._id}
-                isBookmarked={isBookmarked}
-                onToggleBookmark={onToggleBookmark}
-              />
+
               <StyledLink
                 href={`/flashcards/${flashcard._id}`}
                 onClick={(e) => e.stopPropagation()}
                 aria-label="Edit flashcard"
               >
-                <Icon icon={faEdit} aria-hidden="true" />
+                <EditIcon icon={faEdit} aria-hidden="true" />
               </StyledLink>
-            </>
+              <BookmarkButton
+                id={flashcard._id}
+                isBookmarked={isBookmarked}
+                onToggleBookmark={onToggleBookmark}
+              />
+            </HeaderStyling>
           )}
         </CardHeader>
 
