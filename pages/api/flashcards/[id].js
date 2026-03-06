@@ -22,11 +22,12 @@ export default async function handler(request, result) {
   if (request.method === "GET") {
     try {
       const flashcard = await Flashcard.findOne({
-        _id: newObjectId(id),
+        _id: new ObjectId(id),
         userId,
       });
-      if (!flashcard || flashcard.userId !== userId)
+      if (!flashcard) {
         return result.status(404).json({ message: "Flashcard not found" });
+      }
       return result.status(200).json(flashcard);
     } catch (error) {
       return result.status(500).json({ error: error.message });
@@ -35,17 +36,14 @@ export default async function handler(request, result) {
 
   if (["PATCH", "PUT"].includes(request.method)) {
     try {
-      const flashcard = await Flashcard.ffindOne({
-        _id: newObjectId(id),
-        userId,
-      });
-      if (!flashcard || flashcard.userId !== userId) {
-        return result.status(404).json({ message: "Flashcard not found" });
-      }
-      const updated = await Flashcard.findByIdAndUpdate(id, request.body, {
-        new: true,
-        runValidators: true,
-      });
+      const updated = await Flashcard.findOneAndUpdate(
+        { _id: new ObjectId(id), userId },
+        request.body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
       return result.status(200).json(updated);
     } catch (error) {
       return result.status(500).json({ error: error.message });
@@ -53,14 +51,7 @@ export default async function handler(request, result) {
   }
   if (request.method === "DELETE") {
     try {
-      const flashcard = await Flashcard.findOne({
-        _id: newObjectId(id),
-        userId,
-      });
-      if (!flashcard || flashcard.userId !== userId) {
-        return result.status(404).json({ message: "Flashcard not found" });
-      }
-      await Flashcard.findByIdAndDelete({ _id: new ObjectId(id), userId });
+      await Flashcard.findOneAndDelete({ _id: new ObjectId(id), userId });
       return result.status(200).json({ success: true });
     } catch (error) {
       return result.status(500).json({ error: error.message });
