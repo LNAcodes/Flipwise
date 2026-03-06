@@ -2,16 +2,32 @@
 
 import dbConnect from "@/db/connect";
 import Flashcard from "@/db/models/Flashcard";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getToken } from "next-auth/jwt";
+import { ObjectId } from "mongodb";
 
 export default async function handler(request, result) {
   await dbConnect();
 
   const { id } = request.query;
+  const session = await getServerSession(request, result, authOptions);
+  const token = await getToken({ req: request });
+  const userId = token?.sub;
+
+  if (!session) {
+    return result.status(401).json({ message: "Unauthorized" });
+  }
 
   if (request.method === "GET") {
     try {
-      const flashcard = await Flashcard.findById(id);
-      if (!flashcard) return result.status(404).json({ message: "Not found" });
+      const flashcard = await Flashcard.findOne({
+        _id: new ObjectId(id),
+        userId,
+      });
+      if (!flashcard) {
+        return result.status(404).json({ message: "Flashcard not found" });
+      }
       return result.status(200).json(flashcard);
     } catch (error) {
       return result.status(500).json({ error: error.message });
@@ -20,13 +36,14 @@ export default async function handler(request, result) {
 
   if (["PATCH", "PUT"].includes(request.method)) {
     try {
-      const updated = await Flashcard.findByIdAndUpdate(id, request.body, {
-        new: true,
-        runValidators: true,
-      });
-
-      if (!updated) return result.status(404).json({ message: "Not found" });
-
+      const updated = await Flashcard.findOneAndUpdate(
+        { _id: new ObjectId(id), userId },
+        request.body,
+        {
+          new: true,
+          runValidators: true,
+        }
+      );
       return result.status(200).json(updated);
     } catch (error) {
       return result.status(500).json({ error: error.message });
@@ -34,10 +51,7 @@ export default async function handler(request, result) {
   }
   if (request.method === "DELETE") {
     try {
-      const deletedFlashCard = await Flashcard.findByIdAndDelete(id);
-      if (!deletedFlashCard) {
-        return result.status(404).json({ error: "Flashcard not found" });
-      }
+      await Flashcard.findOneAndDelete({ _id: new ObjectId(id), userId });
       return result.status(200).json({ success: true });
     } catch (error) {
       return result.status(500).json({ error: error.message });

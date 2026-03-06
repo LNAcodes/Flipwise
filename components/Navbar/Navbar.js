@@ -9,10 +9,10 @@ import {
   faListUl,
   faPlusCircle,
   faPlay,
-  faBookmark,
   faUser,
   faEye,
 } from "@fortawesome/free-solid-svg-icons";
+import { useSession } from "next-auth/react";
 
 const NavBar = styled.nav`
   display: flex;
@@ -31,7 +31,9 @@ const List = styled.ul`
 `;
 
 const Item = styled.li`
-  padding: 0;
+  padding: 0
+  opacity: ${(props) => (props.$disabled ? 0.4 : 1)};
+  pointer-events: ${(props) => (props.$disabled ? "none" : "auto")};
 `;
 
 const StyledLink = styled(Link)`
@@ -65,6 +67,7 @@ const LinkText = styled.span`
 `;
 
 export default function Navbar() {
+  const { data: session } = useSession();
   const router = useRouter();
 
   const path = router.asPath;
@@ -78,7 +81,7 @@ export default function Navbar() {
   return (
     <NavBar aria-label="Primary">
       <List>
-        {/* <Item>
+        <Item>
           <StyledLink
             href="/"
             aria-label="Go to startpage"
@@ -87,7 +90,7 @@ export default function Navbar() {
             <Icon icon={faHome} aria-hidden="true" />
             <LinkText>Home</LinkText>
           </StyledLink>
-        </Item> */}
+        </Item>
 
         <Item>
           <StyledLink
@@ -100,7 +103,7 @@ export default function Navbar() {
           </StyledLink>
         </Item>
 
-        <Item>
+        <Item $disabled={!session}>
           <StyledLink
             href="/add-card"
             aria-label="Go to add card page"
