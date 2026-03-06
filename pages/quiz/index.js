@@ -3,18 +3,16 @@
 import useSWR from "swr";
 import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
 const PageTitle = styled.h1`
   padding: 0;
 `;
-
 const ButtonGroup = styled.div`
   display: flex;
   gap: 30px;
 `;
-
 const Button = styled.button`
   background-color: ${(props) =>
     props.$correct
@@ -36,21 +34,6 @@ const Button = styled.button`
     background-color: var(--color-secondary);
   }
 `;
-
-const RestartButton = styled.button`
-  background-color: var(--color-primary);
-  border: none;
-  border-radius: 25px;
-  cursor: pointer;
-  color: var(--text-color-light);
-  font-size: 1.2rem;
-  height: 50px;
-  padding: 5px 20px;
-  width: 50%;
-  &:hover {
-    background-color: var(--color-secondary);
-  }
-`;
 const FeedbackMessage = styled.p`
   background: rgba(0, 200, 120, 0.5);
   border: 1px solid var(--color-border);
@@ -58,6 +41,17 @@ const FeedbackMessage = styled.p`
   padding: 10px 14px;
   border-radius: 20px;
   margin: 10px 0 6px;
+  min-width: 300px;
+`;
+const HeadUpDisplay = styled.p`
+  font-size: 13px;
+  font-weight: 300;
+  text-align: left;
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(0, 255, 94, 0.8);
+  padding: 10px 10px 10px 20px;
+  border-radius: 15px;
+  margin: 20px 0 20px 0;
   min-width: 300px;
 `;
 const List = styled.ul`
@@ -77,7 +71,7 @@ const ListItem = styled.li`
   text-align: left;
   background: rgba(255, 255, 255, 0.5);
   border: 1px solid var(--color-border);
-  padding: 10px 20px;
+  padding: 5px 20px;
   border-radius: 20px;
   margin: 10px 0 10px 0;
   &:nth-child(2) {
@@ -113,19 +107,43 @@ export default function QuizPage() {
 
   const [hasSeenAnswer, setHasSeenAnswer] = useState(false);
 
+  // session states
+  const defaultSession = { status: "idle", startedAt: null, finishedAt: null };
+  const [session, setSession] = useLocalStorageState("quizSession", {
+    defaultValue: defaultSession,
+    defaultServerValue: defaultSession,
+  });
+
+  // verstrichene Zeit in Millisekunden
+  const [elapsedTime, setElapsedTime] = useState(0);
+
+  const intervalRef = useRef(null);
+
+  // Zeitformat
+  const formatSeconds = (ms) =>
+    new Intl.NumberFormat("de-DE", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(ms / 1000);
+
+  // Anzahl initialer Quiz Cards festlegen
   const amountOfCards = 10;
 
+  // cards über API laden (SWR > cached die daten)
   const {
     data: flashcards,
     error: cardsError,
     isLoading: cardsLoading,
   } = useSWR("/api/flashcards");
+
+  // collections über API laden (SWR > cached die daten)
   const {
     data: collections,
     error: collectionsError,
     isLoading: colectionsLoading,
   } = useSWR("/api/collections");
 
+  // cards mit collection-color anreichern
   const enrichedFlashcards = (flashcards ?? []).map((card) => {
     const matchingCollection = (collections ?? []).find(
       (col) => col.name === card.collection
@@ -136,6 +154,36 @@ export default function QuizPage() {
     };
   });
 
+  // Quiz starten
+  const startQuiz = useCallback(() => {
+    setSession((session) => {
+      // wenn gestartet und nicht fertig -> status auf 'running' setzen
+      if (session?.startedAt && !session.finishedAt) {
+        return { ...session, status: "running" };
+      }
+      // sonst neu starten
+      return {
+        status: "running",
+        startedAt: new Date().toISOString(),
+        finishedAt: null,
+      };
+    });
+  }, [setSession]);
+
+  // Quiz beenden
+  const finishQuiz = useCallback(() => {
+    setSession((session) => {
+      // wenn noch nicht gestartet oder schon beendet → nichts ändern
+      if (!session?.startedAt || session.finishedAt) return session;
+      return {
+        ...session,
+        status: "finished",
+        finishedAt: new Date().toISOString(),
+      };
+    });
+  }, [setSession]);
+
+  //  richtige/falsche Antworten zählen und nächste Card laden
   function onHandleAnswer(isCorrect) {
     if (isCorrect) {
       setCountCorrect((i) => i + 1);
@@ -145,13 +193,18 @@ export default function QuizPage() {
     setCurrentCard((i) => i + 1);
   }
 
+  // alles zurücksetzen und Quiz neustarten
   function handleQuizRestart() {
     setCurrentCard(0);
     setCountCorrect(0);
     setCountWrong(0);
     setQuizCards([]);
+    setElapsedTime(0);
+    setSession(defaultSession);
+    startQuiz();
   }
 
+  // random cards holen, index auf 0 setzen und Quiz starten
   useEffect(() => {
     if (!flashcards?.length) return;
     if (!collections?.length) return;
@@ -159,14 +212,55 @@ export default function QuizPage() {
 
     setQuizCards(pickRandomCards(enrichedFlashcards, amountOfCards));
     setCurrentCard(0);
+    startQuiz();
   }, [
     flashcards,
     collections,
     enrichedFlashcards,
     amountOfCards,
     quizCards.length,
+    setCurrentCard,
+    setQuizCards,
+    startQuiz,
   ]);
 
+  // Quiz beenden, außer wenn ...
+  useEffect(() => {
+    if (session.status !== "running") return; // ... quiz nicht mehr läuft
+    if (quizCards.length === 0) return; // ... es keine cards gibt
+    if (currentCard < quizCards.length) return; // ... noch Karten übrig sind
+
+    finishQuiz();
+  }, [currentCard, quizCards.length, session.status, finishQuiz]);
+
+  // Timer starten, vergangene Zeit berechnenen und als state speichern
+  useEffect(() => {
+    if (!session?.startedAt) return;
+
+    // wenn finishedAt gesetzt: finalen Wert berechnen (einmal)
+    if (session.finishedAt) {
+      setElapsedTime(
+        Date.parse(session.finishedAt) - Date.parse(session.startedAt)
+      );
+      return;
+    }
+
+    // läuft (auch nach Navigation zurück, weil startedAt persisted ist)
+    if (intervalRef.current) clearInterval(intervalRef.current);
+
+    // Timer starten und alle 100 ms die Callback-Funktion ausführen
+    intervalRef.current = setInterval(() => {
+      const startMs = Date.parse(session.startedAt); // gespeicherten Startzeitpunkt Zahl umwandeln (ISO to Ms)
+      setElapsedTime(Date.now() - startMs); // berechne verstrichene Zeit seit startedAt in Ms und als state speichern
+    }, 100);
+
+    return () => {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    };
+  }, [session?.startedAt, session?.finishedAt]);
+
+  // beim card-wechsel: antwort-status zurücksetzen (buttons erst nach ‘show answer’ einblenden)
   useEffect(() => {
     setHasSeenAnswer(false);
   }, [currentCard]);
@@ -205,10 +299,11 @@ export default function QuizPage() {
       <PageTitle>Quiz</PageTitle>
       {currentCard < quizCards.length ? (
         <>
-          <FeedbackMessage>
-            {currentCard + 1}/{quizCards.length} | Correct: {countCorrect} |
-            Wrong {countWrong}
-          </FeedbackMessage>
+          <HeadUpDisplay>
+            Correct: {countCorrect} | Wrong: {countWrong} | Card:{" "}
+            {currentCard + 1}/{quizCards.length} | Time:{" "}
+            {formatSeconds(elapsedTime)}s
+          </HeadUpDisplay>
           <FlashCardList
             flashcards={[quizCards[currentCard]]}
             onShowAnswer={() => setHasSeenAnswer(true)}
@@ -233,6 +328,14 @@ export default function QuizPage() {
             <ListItem>Answered cards: {quizCards.length}</ListItem>
             <ListItem>Correct: {countCorrect}</ListItem>
             <ListItem>Wrong: {countWrong} </ListItem>
+            <ListItem>
+              Acuracy: {(countCorrect / quizCards.length) * 100}%
+            </ListItem>
+            <ListItem>Total time: {formatSeconds(elapsedTime)} sec</ListItem>
+            <ListItem>
+              Ø Avg time/card: {formatSeconds(elapsedTime / quizCards.length)}{" "}
+              sec
+            </ListItem>
           </List>
           <Button $restart onClick={() => handleQuizRestart()}>
             Restart Quiz
