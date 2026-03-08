@@ -1,7 +1,7 @@
 //pages/quiz/index.js
 import useSWR from "swr";
 import styled from "styled-components";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
 import QuizSetup from "@/components/QuizSetup";
@@ -116,8 +116,6 @@ export default function QuizPage() {
 
   // verstrichene Zeit in Millisekunden
   const [elapsedTime, setElapsedTime] = useState(0);
-
-  const intervalRef = useRef(null);
 
   // Zeitformat
   const formatSeconds = (ms) =>
@@ -234,18 +232,14 @@ export default function QuizPage() {
       return;
     }
 
-    // läuft (auch nach Navigation zurück, weil startedAt persisted ist)
-    if (intervalRef.current) clearInterval(intervalRef.current);
-
     // Timer starten und alle 100 ms die Callback-Funktion ausführen
-    intervalRef.current = setInterval(() => {
+    const intervalID = setInterval(() => {
       const startMs = Date.parse(session.startedAt); // gespeicherten Startzeitpunkt Zahl umwandeln (ISO to Ms)
       setElapsedTime(Date.now() - startMs); // berechne verstrichene Zeit seit startedAt in Ms und als state speichern
-    }, 100);
+    }, 250);
 
     return () => {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
+      clearInterval(intervalID);
     };
   }, [session?.startedAt, session?.finishedAt]);
 
@@ -254,10 +248,26 @@ export default function QuizPage() {
     setHasSeenAnswer(false);
   }, [currentCard]);
 
-  if (cardsError || collectionsError)
-    return <FeedbackMessage>Error loading</FeedbackMessage>;
-  if (cardsLoading || collectionsLoading)
-    return <FeedbackMessage>Loading data...</FeedbackMessage>;
+  if (cardsError || collectionsError) {
+    return (
+      <>
+        <PageTitle>Quiz</PageTitle>
+        <FeedbackMessage role="alert">Error loading</FeedbackMessage>
+      </>
+    );
+  }
+  console.log(elapsedTime);
+
+  if (cardsLoading || colectionsLoading) {
+    return (
+      <>
+        <PageTitle>Quiz</PageTitle>
+        <FeedbackMessage role="status" aria-live="polite">
+          Loading data... Please wait...
+        </FeedbackMessage>
+      </>
+    );
+  }
 
   // Die Weiche der Anzeige
   // 1. Logik-Bereich der Prüfung des QuizStatus
