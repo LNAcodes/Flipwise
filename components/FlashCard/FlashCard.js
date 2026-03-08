@@ -117,8 +117,11 @@ const EditIcon = styled(FontAwesomeIcon)`
 const TrashIcon = styled(FontAwesomeIcon)`
   width: 25px;
   height: 25px;
-  color: red;
+  color: #fff;
   max-width: none;
+  &:hover {
+    color: red;
+  }
 `;
 
 const Button = styled.button`
