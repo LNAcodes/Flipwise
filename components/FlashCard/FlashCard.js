@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import ReactCardFlip from "react-card-flip";
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { useFlipHint } from "@/hooks/useFlipHint";
 import FlashCardFooter from "@/components/FlashCard/FlashCardFooter";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEdit,
+  faTrash,
+  faCancel,
+  faCheck,
+} from "@fortawesome/free-solid-svg-icons";
 import BookmarkButton from "../Bookmarks/bookmarks";
 
 /* hexcolor in rgb color umwandeln */
@@ -95,56 +100,32 @@ const CardHeader = styled.div`
 const HeaderStyling = styled.div`
   display: flex;
   gap: 6px;
+  align-items: center;
 `;
 const StyledLink = styled(Link)`
-  gap: 6px;
-  padding: 10px 5px 10px 10px;
-  text-align: center;
-  color: #fff;
   text-decoration: none;
-  min-height: 44px;
-
-  &:hover {
-    color: var(--color-accent);
-  }
 `;
 
-const EditIcon = styled(FontAwesomeIcon)`
-  width: 30px;
-  height: 30px;
-  max-width: none;
-  flex: 0 0 auto;
-`;
-const TrashIcon = styled(FontAwesomeIcon)`
+const IconButton = styled(FontAwesomeIcon)`
   width: 25px;
   height: 25px;
   color: #fff;
   max-width: none;
-  &:hover {
-    color: red;
-  }
+  ${({ hoverColor }) =>
+    hoverColor &&
+    css`
+      &:hover {
+        color: ${hoverColor};
+      }
+    `}
 `;
-
 const Button = styled.button`
   background-color: transparent;
   border: none;
 `;
 const ReallyText = styled.p`
   background-color: transparent;
-  border: none;
-  color: var(--color-accent);
-`;
-const CancelButton = styled.button`
-  margin: 10px 0;
-  background-color: transparent;
-  padding: 0;
-  font-size: 20px;
-`;
-const ConfirmButton = styled.button`
-  margin: 10px 0;
-  background-color: transparent;
-  font-size: 20px;
-  padding: 0;
+  color: #fff;
 `;
 
 export default function FlashCard({
@@ -195,43 +176,56 @@ export default function FlashCard({
           <CollectionTitle>{flashcard.collection}</CollectionTitle>
           {showActions && (
             <HeaderStyling>
-              <Button
-                onClick={(event) => {
-                  event.stopPropagation();
-                  setConfirm(!confirm);
-                }}
-              >
-                <TrashIcon icon={faTrash} aria-hidden="true" />
-              </Button>
+              {!confirm && (
+                <>
+                  <Button
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      setConfirm(!confirm);
+                    }}
+                  >
+                    <IconButton
+                      hoverColor={"red"}
+                      icon={faTrash}
+                      aria-hidden="true"
+                    />
+                  </Button>
+                  <StyledLink
+                    href={`/flashcards/${flashcard._id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    aria-label="Edit flashcard"
+                  >
+                    <IconButton
+                      hoverColor={"var(--color-accent)"}
+                      icon={faEdit}
+                      aria-hidden="true"
+                    />
+                  </StyledLink>
+                  <BookmarkButton
+                    id={flashcard._id}
+                    isBookmarked={isBookmarked}
+                    onToggleBookmark={onToggleBookmark}
+                    aria-label="Bookmark Button"
+                  />
+                </>
+              )}
               {confirm && (
                 <>
                   <ReallyText arila-label="Really?">Really?</ReallyText>
-                  <CancelButton
+                  <Button
                     onClick={(event) => {
                       event.stopPropagation();
                       setConfirm(false);
                     }}
                     arial-label="Cancel"
                   >
-                    ❌
-                  </CancelButton>
-                  <ConfirmButton onClick={handleDelete}>✅</ConfirmButton>
+                    <IconButton icon={faCancel} />
+                  </Button>
+                  <Button onClick={handleDelete}>
+                    <IconButton icon={faCheck} />
+                  </Button>
                 </>
               )}
-
-              <StyledLink
-                href={`/flashcards/${flashcard._id}`}
-                onClick={(e) => e.stopPropagation()}
-                aria-label="Edit flashcard"
-              >
-                <EditIcon icon={faEdit} aria-hidden="true" />
-              </StyledLink>
-              <BookmarkButton
-                id={flashcard._id}
-                isBookmarked={isBookmarked}
-                onToggleBookmark={onToggleBookmark}
-                aria-label="Bookmark Button"
-              />
             </HeaderStyling>
           )}
         </CardHeader>
