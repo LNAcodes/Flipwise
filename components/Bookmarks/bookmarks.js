@@ -10,10 +10,11 @@ const Button = styled.button`
   border: 0;
   padding: 0;
   width: 30px;
-  height: 30px;
+
   font-size: 30px;
   //Test here: marked = black, unmarked = white
-  color: ${({ $isBookmarked }) => ($isBookmarked ? "#000" : "#fff")};
+  color: ${({ $isBookmarked }) =>
+    $isBookmarked ? "var(--color-accent)" : "#fff"};
 
   &:hover {
     transform: scale(1.2);
