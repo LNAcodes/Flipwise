@@ -6,15 +6,17 @@ import { useState } from "react";
 import Image from "next/image";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGithub } from "@fortawesome/free-brands-svg-icons";
+import Link from "next/link";
 
-const ProfileTitle = styled.h2`
-  color: white;
+const PageTitle = styled.h1`
+  padding: 0;
 `;
 
 const ProfilContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  min-height: 80vh;
 `;
 
 const Text = styled.p`
@@ -26,6 +28,32 @@ const Button = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
+`;
+
+const AddCardButton = styled.button`
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: 30px;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 60px;
+  padding: 15px 40px;
+  text-align: center;
+  margin: 10px 0;
+  text-decoration: none;
+`;
+
+const LogoutButton = styled.button`
+  background-color: var(--color-secondary);
+  border: none;
+  border-radius: 30px;
+  color: var(--text-color-light);
+  font-size: 1.2rem;
+  height: 60px;
+  padding: 15px 40px;
+  text-align: center;
+  margin-top: auto;
+  margin-bottom: 20px;
 `;
 
 const ProfilePicturePlaceholder = styled.div`
@@ -48,7 +76,7 @@ export default function ProfilePage() {
   if (session) {
     return (
       <ProfilContainer>
-        <ProfileTitle>Profile</ProfileTitle>
+        <PageTitle>Profile</PageTitle>
         {session.user.image ? (
           <Image
             src={session.user.image}
@@ -63,21 +91,24 @@ export default function ProfilePage() {
         <Text>
           You are logged in now. You can add and manage your own flashcards.
         </Text>
-        <Button
+        <Link href="/add-card">
+          <AddCardButton>Add new Cards</AddCardButton>
+        </Link>
+        <LogoutButton
           onClick={async () => {
             await signOut({ redirect: false });
             setLogoutMessage(true);
           }}
         >
           Logout
-        </Button>
+        </LogoutButton>
       </ProfilContainer>
     );
   }
   return (
     <ProfilContainer>
       {logoutMessage && <Text>You have been logged out successfully.</Text>}
-      <ProfileTitle>Profile</ProfileTitle>
+      <PageTitle>Profile</PageTitle>
       <ProfilePicturePlaceholder />
       <Text>You are logged out</Text>
       <Text>

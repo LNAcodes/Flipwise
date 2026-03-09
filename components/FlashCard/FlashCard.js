@@ -32,6 +32,7 @@ const CardFront = styled.article`
   margin-top: 10px;
   padding: 0 10px 0 10px;
   min-width: 300px;
+  max-width: 300px;
 
   &:hover {
     cursor: pointer;
