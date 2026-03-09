@@ -256,9 +256,8 @@ export default function QuizPage() {
       </>
     );
   }
-  console.log(elapsedTime);
 
-  if (cardsLoading || colectionsLoading) {
+  if (cardsLoading || collectionsLoading) {
     return (
       <>
         <PageTitle>Quiz</PageTitle>
