@@ -1,18 +1,21 @@
-// pages\quiz\index.js
-
+//pages/quiz/index.js
 import useSWR from "swr";
-import FlashCardList from "@/components/FlashCardList/FlashCardList";
 import styled from "styled-components";
 import { useCallback, useEffect, useState } from "react";
 import useLocalStorageState from "use-local-storage-state";
 
+import QuizSetup from "@/components/QuizSetup";
+import FlashCardList from "@/components/FlashCardList/FlashCardList";
+
 const PageTitle = styled.h1`
   padding: 0;
 `;
+
 const ButtonGroup = styled.div`
   display: flex;
   gap: 30px;
 `;
+
 const Button = styled.button`
   background-color: ${(props) =>
     props.$correct
@@ -34,6 +37,7 @@ const Button = styled.button`
     background-color: var(--color-secondary);
   }
 `;
+
 const FeedbackMessage = styled.p`
   background: rgba(0, 200, 120, 0.5);
   border: 1px solid var(--color-border);
@@ -43,6 +47,7 @@ const FeedbackMessage = styled.p`
   margin: 10px 0 6px;
   min-width: 300px;
 `;
+
 const HeadUpDisplay = styled.p`
   font-size: 13px;
   font-weight: 300;
@@ -54,6 +59,7 @@ const HeadUpDisplay = styled.p`
   margin: 20px 0 20px 0;
   min-width: 300px;
 `;
+
 const List = styled.ul`
   list-style: none;
   text-align: left;
@@ -67,6 +73,7 @@ const List = styled.ul`
   line-height: 2;
   min-width: 300px;
 `;
+
 const ListItem = styled.li`
   text-align: left;
   background: rgba(255, 255, 255, 0.5);
@@ -83,13 +90,6 @@ const ListItem = styled.li`
     color: var(--color-wrong);
   }
 `;
-
-// ZUFÄLLIGE QUIZ CARDS ZUSAMMENSTELLEN
-function pickRandomCards(cards, amountOfCards) {
-  const copy = [...cards];
-  copy.sort(() => Math.random() - 0.5);
-  return copy.slice(0, Math.min(amountOfCards, copy.length));
-}
 
 export default function QuizPage() {
   const [quizCards, setQuizCards] = useLocalStorageState("quizcards", {
@@ -124,9 +124,6 @@ export default function QuizPage() {
       maximumFractionDigits: 2,
     }).format(ms / 1000);
 
-  // Anzahl initialer Quiz Cards festlegen
-  const amountOfCards = 10;
-
   // cards über API laden (SWR > cached die daten)
   const {
     data: flashcards,
@@ -138,7 +135,7 @@ export default function QuizPage() {
   const {
     data: collections,
     error: collectionsError,
-    isLoading: colectionsLoading,
+    isLoading: collectionsLoading,
   } = useSWR("/api/collections");
 
   // cards mit collection-color anreichern
@@ -148,7 +145,7 @@ export default function QuizPage() {
     );
     return {
       ...card,
-      color: matchingCollection ? matchingCollection.color : "#000000",
+      color: matchingCollection ? matchingCollection.color : "#cccccc",
     };
   });
 
@@ -181,7 +178,16 @@ export default function QuizPage() {
     });
   }, [setSession]);
 
-  //  richtige/falsche Antworten zählen und nächste Card laden
+  function handleStartQuiz(selectedCards) {
+    setQuizCards(selectedCards); // die gefilterten Karten vom Setup
+    setCurrentCard(0);
+    setCountCorrect(0);
+    setCountWrong(0);
+    setElapsedTime(0);
+    startQuiz();
+  }
+
+  // richtige/falsche Antworten zählen und nächste Card laden
   function onHandleAnswer(isCorrect) {
     if (isCorrect) {
       setCountCorrect((i) => i + 1);
@@ -191,36 +197,19 @@ export default function QuizPage() {
     setCurrentCard((i) => i + 1);
   }
 
-  // alles zurücksetzen und Quiz neustarten
-  function handleQuizRestart() {
-    setCurrentCard(0);
+  function handlePlayAgain() {
+    setCurrentCard(0); // Neustart mit gleichen Karten
     setCountCorrect(0);
     setCountWrong(0);
-    setQuizCards([]);
     setElapsedTime(0);
-    setSession(defaultSession);
     startQuiz();
   }
 
-  // random cards holen, index auf 0 setzen und Quiz starten
-  useEffect(() => {
-    if (!flashcards?.length) return;
-    if (!collections?.length) return;
-    if (quizCards.length > 0) return;
-
-    setQuizCards(pickRandomCards(enrichedFlashcards, amountOfCards));
+  function handleBackToSetup() {
+    setQuizCards([]); // Karten werden gelöscht, Setup erscheint
     setCurrentCard(0);
-    startQuiz();
-  }, [
-    flashcards,
-    collections,
-    enrichedFlashcards,
-    amountOfCards,
-    quizCards.length,
-    setCurrentCard,
-    setQuizCards,
-    startQuiz,
-  ]);
+    setSession(defaultSession);
+  }
 
   // Quiz beenden, außer wenn ...
   useEffect(() => {
@@ -280,19 +269,35 @@ export default function QuizPage() {
     );
   }
 
+  // Die Weiche der Anzeige
+  // 1. Logik-Bereich der Prüfung des QuizStatus
+  let quizState = "setup"; // Standardmäßig sind wir im Setup
+  // Bei nicht vorhandenen Karten (Quiz zurückgesetzt) zeige Setup
   if (quizCards.length === 0) {
-    return (
-      <>
-        <PageTitle>Quiz</PageTitle>
-        <FeedbackMessage role="status">Preparing quiz...</FeedbackMessage>
-      </>
-    );
+    quizState = "setup";
+    // während des Quizes, QuizKarten sind vorhanden, Quiz aktiv
+  } else if (currentCard < quizCards.length) {
+    quizState = "active";
+    // wenn alles andere nicht zutrifft, ist Quiz finished (gleichzusetzen mit currentCard=Gesamtlänge Quiz)
+  } else {
+    quizState = "finished";
   }
 
   return (
     <>
       <PageTitle>Quiz</PageTitle>
-      {currentCard < quizCards.length ? (
+
+      {/* ZUSTAND 1: SETUP - Nur wenn keine Karten gewählt sind */}
+      {quizState === "setup" && (
+        <QuizSetup
+          allCards={enrichedFlashcards}
+          collections={collections}
+          onStart={handleStartQuiz}
+        />
+      )}
+
+      {/* ZUSTAND 2: ACTIVE - Während das Quiz läuft */}
+      {quizState === "active" && (
         <>
           <HeadUpDisplay>
             Correct: {countCorrect} | Wrong: {countWrong} | Card:{" "}
@@ -304,7 +309,6 @@ export default function QuizPage() {
             onShowAnswer={() => setHasSeenAnswer(true)}
             showActions={false}
           />
-
           {hasSeenAnswer && (
             <ButtonGroup>
               <Button $wrong onClick={() => onHandleAnswer(false)}>
@@ -316,7 +320,10 @@ export default function QuizPage() {
             </ButtonGroup>
           )}
         </>
-      ) : (
+      )}
+
+      {/* ZUSTAND 3: FINISHED - Wenn alle Karten durch sind */}
+      {quizState === "finished" && (
         <>
           <FeedbackMessage>Quiz finished.</FeedbackMessage>
           <List>
@@ -324,7 +331,7 @@ export default function QuizPage() {
             <ListItem>Correct: {countCorrect}</ListItem>
             <ListItem>Wrong: {countWrong} </ListItem>
             <ListItem>
-              Acuracy: {(countCorrect / quizCards.length) * 100}%
+              Accuracy: {Math.round((countCorrect / quizCards.length) * 100)}%
             </ListItem>
             <ListItem>Total time: {formatSeconds(elapsedTime)} sec</ListItem>
             <ListItem>
@@ -332,8 +339,13 @@ export default function QuizPage() {
               sec
             </ListItem>
           </List>
-          <Button $restart onClick={() => handleQuizRestart()}>
-            Restart Quiz
+
+          <Button onClick={handlePlayAgain} style={{ marginBottom: "10px" }}>
+            Play Again
+          </Button>
+
+          <Button onClick={handleBackToSetup} $variant="secondary">
+            New Quiz
           </Button>
         </>
       )}
@@ -343,5 +355,5 @@ export default function QuizPage() {
 
 QuizPage.meta = {
   title: "Quiz",
-  description: "Start quiz and learn cards.",
+  description: "Configure and play your quiz.",
 };
